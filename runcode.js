@@ -3,6 +3,19 @@ function runCode() {
     var apigClient = apigClientFactory.newClient({
         apiKey: 'NfPLJMgMRZ59PS0Le1979LzuenRHCjN1KhvPup41'
     });
+    
+    $('#modalTitle').text('Running...');
+    $('#modalBody').html('<pre id="output"></pre>'); 
+    $('#outputModal').modal('show');
+
+    var display = ace.edit("output");
+    display.setOptions({
+                        maxLines: 25,
+                        minLines: 1,
+                        readOnly: true,
+                        highlightActiveLine: false,
+                        highlightGutterLine: false
+                    });
 
     var className = $("#mainClass").val();
     if (className === "" || className === undefined) className = "Main";
@@ -45,16 +58,8 @@ function runCode() {
             }
             
             $('#modalTitle').text('Execution ' + success);
-            $('#modalBody').html('<pre id="output">'+returntext+'</pre>');
-                
-            var display = ace.edit("output");
-            display.setOptions({
-                                maxLines: 25,
-                                minLines: 1,
-                                readOnly: true,
-                                highlightActiveLine: false,
-                                highlightGutterLine: false
-                            });
+            display.setValue(returntext);
+            
         }).catch(function(result){
             var timeDiff = (new Date().getTime()) - start;
             $('#exTime').html('Execution time: ' + (timeDiff) + 'ms');
@@ -62,6 +67,4 @@ function runCode() {
             $('#modalTitle').text('Execution Failed');
             $('#modalBody').html('<p>Failure communicating with server</p>');
         });
- 
-        $('#outputModal').modal('show');
 }
