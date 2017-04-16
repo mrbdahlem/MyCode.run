@@ -9,6 +9,7 @@ function runCode() {
     $('#outputModal').modal('show');
 
     var display = ace.edit("output");
+    display.setTheme("ace/theme/terminal");
     display.setOptions({
                         maxLines: 25,
                         minLines: 1,
