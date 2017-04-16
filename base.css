@@ -32,3 +32,6 @@ container {
     overflow: hidden
 }
 
+.navbar-brand {
+    font-family: Inconsolata;
+}
