@@ -10,12 +10,15 @@ function runCode() {
 
     var display = ace.edit("output");
     display.setTheme("ace/theme/terminal");
+    display.$blockScrolling = Infinity;
     display.setOptions({
                         maxLines: 25,
                         minLines: 1,
                         readOnly: true,
                         highlightActiveLine: false,
-                        highlightGutterLine: false
+                        highlightGutterLine: false,
+                        fontFamily: "Inconsolata",
+                        fontSize: "12pt"
                     });
 
     var className = $("#mainClass").val();
