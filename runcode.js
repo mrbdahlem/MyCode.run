@@ -5,8 +5,10 @@ function runCode() {
     });
     
     $('#modalTitle').text('Running...');
-    $('#modalBody').html('<pre id="output"></pre>'); 
+    $('#modalBody').html('<pre id="output">Please wait...</pre>'); 
+    $('#exTime').html('Execution time: ___ ms');
     $('#outputModal').modal('show');
+    
 
     var display = ace.edit("output");
     display.setTheme("ace/theme/terminal");
