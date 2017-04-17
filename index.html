@@ -63,8 +63,8 @@
         <div class="container">
             <p>Enter your Java code below, make sure that your main class is identified, then click "Run" to try it out.</p>
             
-            <div class="row">
-                <div id="filesList" class="col-sm-3 list-group">
+            <div class="row no-pad">
+                <div id="filesList" class="col-sm-2 list-group">
                 </div>
                 <div class="col-md-auto">
                     <pre id="editor"></pre>
@@ -75,13 +75,13 @@
 
 
         <div class="modal fade" id="outputModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog  modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="modalTitle">Modal title</h4>
+                        <h4 class="modal-title" id="outputModalTitle">Modal title</h4>
                     </div>
-                    <div class="modal-body" id="modalBody">
+                    <div class="modal-body" id="outputModalBody">
                     </div>
                     <div class="modal-footer">
                         <span id="exTime"></span>
@@ -98,7 +98,9 @@
         <script src="ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
 
         <script>     
-                        
+                     
+            // Setup ace text editor
+
             //var $ = document.getElementById.bind(document);
             var dom = require("ace/lib/dom");
             
@@ -123,9 +125,11 @@
                     editor.resize();
                 }
             });
-            
+
+            // Connect changes in editor to whatever file is being edited
             editor.on('change', function() { FileManager.updateFile(editor.getValue()); });
                      
+            // Create a sample file
             var mainFile = new SourceFile();
             mainFile.name = "Main.java";
             mainFile.contents = 
@@ -134,12 +138,17 @@
         System.out.println(\"Hello World\"); \n\
     } \n\
 }";
+            // Add the sample file to the filemanager and prepare the filemanager
             FileManager.addFile(mainFile);
             FileManager.setFileList("#filesList");
             FileManager.setMainFile(mainFile.name);
             FileManager.setEditor(editor);
             FileManager.setCurrentFile(mainFile.name);
             
+            /*
+             * Create a new source file, prompting the user for its name.  Then
+             * add the new file to the file manager.
+             */
             function newFile() {
                 var filename = getFileName("New file name:");
                 
@@ -149,6 +158,9 @@
                 }
             }
             
+            /*
+             * Rename the current file, prompting the user for the new name
+             */
             function renameFile() {
                 var filename = getFileName("New file name:", FileManager.getFile().name);
                 
@@ -157,11 +169,15 @@
                 }
             }
             
-            function getFileName(promptText, def) {
+            /*
+             * Prompt the user for a file name, looping until something is
+             * entered or cancel is pressed
+             */
+            function getFileName(promptText, defaultval) {
                 var value = "";
                 
                 while (value === "") {
-                    value = prompt(promptText, def);
+                    value = prompt(promptText, defaultval);
                 }
                 
                 return value;

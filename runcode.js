@@ -1,14 +1,18 @@
+/* global FileManager */
+
 function runCode() {
     // Create a client using the public API key
     var apigClient = apigClientFactory.newClient({
         apiKey: 'NfPLJMgMRZ59PS0Le1979LzuenRHCjN1KhvPup41'
     });
     
-    $('#modalTitle').text('Running...');
-    $('#modalBody').html('<pre id="output">Please wait...</pre>'); 
+    // Set up a bootstrap modal to display the output of the run
+    $('#outputModalTitle').text('Running...');
+    $('#outputModalBody').html('<pre id="output">Please wait...</pre>'); 
     $('#exTime').html('Execution time: ___ ms');
     $('#outputModal').modal('show');
     
+    // Prepare the output display as a read-only editor
     var display = ace.edit("output");
     display.setTheme("ace/theme/terminal");
     display.$blockScrolling = Infinity;
@@ -22,7 +26,9 @@ function runCode() {
                         fontSize: "12pt"
                     });
 
-        
+                 
+    // Prepare the request to run the code
+    // Set up the request body for a compile-run request
     var body = {
         version: 1,
         compile: {
@@ -33,6 +39,7 @@ function runCode() {
         "test-type": "run"
     };
     
+    // Add the files in the global file manager to the request body.
     for (var i = 0; i < FileManager.getNumFiles(); i++) {
         var file = {};
         file.name = FileManager.getFile(i).name;
@@ -40,6 +47,7 @@ function runCode() {
         body.compile.sourceFiles.push(file);
     }
     
+    // Add parameters for the request
     var params = {
         "Content-Type": "application/json",
         "Accept": "application/json"
@@ -47,29 +55,34 @@ function runCode() {
     
     var additionalParams = {};
     
+    // Record the current time to calculate how long the request takes
     var start = new Date().getTime();
     
+    // Make the compile-run request
     apigClient.helloFunctionPost(params, body, additionalParams)
         .then(function(result){
-    
+            // If the request returns properly...
+            // calculate and display the execution time
             var timeDiff = (new Date().getTime()) - start;
             $('#exTime').html('Execution time: ' + (timeDiff) + 'ms');
             
+            // Retrieve the output from the run
             returntext = result.data.result;
             
-            var success = 'Failed';
-            if (result.data.succeeded) {
-                success = 'Succeeded';
-            }
-            
-            $('#modalTitle').text('Execution ' + success);
+            // Display whether the compile-run succeeded
+            var success = (result.data.succeeded) ? 'Succeeded' : 'Failed';
+            $('#outputModalTitle').text('Execution ' + success);
+         
+            // Show the response
             display.setValue(returntext, 1);
-            
         }).catch(function(result){
+            // If the request did not return properly...
+            // calculate and display the execution time
             var timeDiff = (new Date().getTime()) - start;
             $('#exTime').html('Execution time: ' + (timeDiff) + 'ms');
             
-            $('#modalTitle').text('Execution Failed');
-            $('#modalBody').html('<p>Failure communicating with server</p>');
+            // Display the response
+            $('#outputModalTitle').text('Execution Failed');
+            $('#outputModalBody').html('<p>Failure communicating with server</p>');
         });
 }

@@ -1,3 +1,6 @@
+/*
+ * A File Manager singleton, manages source files
+ */
 var FileManager = new function() {
     this.files = [];
     this.currentFile = null;
@@ -5,16 +8,25 @@ var FileManager = new function() {
     this.filelist = null;
     this.editor = null;
     
+    /*
+     * Get the number of files stored in the file manager
+     */
     this.getNumFiles = function () {
         return this.files.length;
-    }
+    };
     
+    /*
+     * Add a file to the file manager, then alphabetize the file list.
+     */
     this.addFile = function(file) {
         this.files.push(file);
         this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
         this.updateDisplay();
     };
     
+    /*
+     * Retrieve a file from the manager by its index
+     */
     this.getFile = function(num) {
         if (num === undefined | num === null) {
             return this.currentFile;
@@ -22,6 +34,10 @@ var FileManager = new function() {
         return this.files[num];
     }
     
+    /*
+     * Remove a file from the manager by its name.  if no name is provided,
+     * remove the currently selected file.
+     */
     this.removeFile = function(filename) {
         filename = filename || this.currentFile.name;
         
@@ -44,6 +60,10 @@ var FileManager = new function() {
         this.updateDisplay();
     };
     
+    /*
+     * Replace the contents of a file in the manager, if no file is
+     * provided, updates the currently selected file
+     */
     this.updateFile = function(contents, file) {
         file = file || this.currentFile;
         
@@ -52,6 +72,10 @@ var FileManager = new function() {
         }
     };
     
+    /*
+     * Rename a file in the file manager.  If no file is provided, rename the
+     * current file.
+     */    
     this.renameFile = function(newName, file) {
         file = file || this.currentFile;
         
@@ -66,6 +90,9 @@ var FileManager = new function() {
         this.updateDisplay();
     };
     
+    /*
+     * Get the contents of a file based on its file name.
+     */
     this.getFileContents = function(fileName) {
         for (var i = 0; i < this.files.length; i++) {
             if (this.files[i].name === fileName) {
@@ -75,6 +102,9 @@ var FileManager = new function() {
         return null;
     };
     
+    /*
+     * Select a file, making it the currently selected file based on its name.
+     */
     this.setCurrentFile = function(fileName) {
         for (var i = 0; i < this.files.length; i++) {
             if (this.files[i].name === fileName) {
@@ -86,26 +116,43 @@ var FileManager = new function() {
         return null;  
     };
     
+    /*
+     * Select the main file to be run, based on its file name.
+     */
     this.setMainFile = function(fileName) {
         this.mainFile = fileName || this.currentFile.name;
         
         this.updateDisplay();
     };
     
+    /*
+     * Retrieve the main file.
+     */
     this.getMainFile = function() {
         return this.mainFile;
     };
     
+    /*
+     * Set the DOM element that will hold a list of files in the manager
+     */
     this.setFileList = function(el) {
         this.filelist = $(el);
         
         this.updateDisplay();
     };
     
+    /*
+     * Set the editor that will display and edit the currently selected file
+     */
     this.setEditor = function(ed) {
         this.editor = ed;
     };
     
+    /*
+     * Update the file list and the editor to display the names of all files
+     * in the manager, and the contents of the currently selected file, 
+     * respectively
+     */
     this.updateDisplay = function() {
         if (this.editor !== null) {
             this.editor.setValue(this.currentFile.contents, 1);
@@ -122,7 +169,7 @@ var FileManager = new function() {
                 if (this.files[i].name === this.mainFile) {
                     var star = document.createElement('span');
                     $(star).addClass('glyphicon')
-                           .addClass('glyphicon-star-empty');
+                           .addClass('glyphicon-play-circle');
                    
                     $(f).html($(f).text() + '&nbsp;');
                     $(f).append(star);
@@ -151,6 +198,9 @@ var FileManager = new function() {
     };
 };
 
+/*
+ * A simple class that will hold a single source file and its filename
+ */
 function SourceFile(name, content) {
     if (name) {
         this.name = name;
