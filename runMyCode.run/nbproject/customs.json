@@ -4,6 +4,9 @@
         "integrity": {
             "context": "script"
         },
+        "color": {
+            "context": "link"
+        },
         "aria-expanded": {}
     }
 }
