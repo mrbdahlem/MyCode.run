@@ -1,9 +1,7 @@
-/* global FileManager */
-
 function runCode() {
     // Create a client using the public API key
     var apigClient = apigClientFactory.newClient({
-        apiKey: 'NfPLJMgMRZ59PS0Le1979LzuenRHCjN1KhvPup41'
+        apiKey: HELLO_API_KEY
     });
     
     // Set up a bootstrap modal to display the output of the run

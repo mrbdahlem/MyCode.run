@@ -1,0 +1,1 @@
+var HELLO_API_KEY = 'NfPLJMgMRZ59PS0Le1979LzuenRHCjN1KhvPup41';  // Public API Key

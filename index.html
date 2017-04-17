@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>run MyCode</title>
+        <title>run.MyCode</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <!-- favicons -->
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
         <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
         <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
         <link rel="manifest" href="/manifest.json">
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="theme-color" content="#ffffff">
-        
+
+        <!-- Polyfill... make browsers understand the same Javascript -->
         <script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+        
+        <!-- AWS Lambda API for HelloFunction runner -->
         <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
         <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
         <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
@@ -25,11 +29,10 @@
         <script type="text/javascript" src="apigClient.js"></script>
         <script type="text/javascript" src="filemanager.js"></script>
         
-        
+        <!-- Logo font -->
         <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Inconsolata" />
         
-        <!-- bootstrap -->
-        <!-- Latest compiled and minified CSS -->
+        <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
         <!-- Bootstrap theme -->
@@ -38,40 +41,52 @@
         <link rel="stylesheet" href="base.css">
     </head>
     <body>
+        <!-- The main navigation bar/header -->
         <nav class="navbar navbar-inverse navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <span class="navbar-brand" style="padding-top: 10px"><img src="winkingmonkey.svg" height="32" style="display: inline-block;" align="middle"> myCode.run();</span>
+                    <!-- winking monkey logo and brand -->
+                    <span class="navbar-brand" style="padding-top: 10px"><img src="winkingmonkey.svg" height="32" style="display: inline-block;" align="middle">&nbsp;myCode.run();</span>
+                    
+                    <!-- the hamburger expand/collapse button for small screens -->
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    
                 </div>
+                
+                <!-- nav menu -->
                 <div id="navbar" class="collapse navbar-collapse navbar-right">                    
                     <ul class="nav navbar-nav" style="margin-right: 0px; margin-left: 0px">
+                        <!-- Main file menu -->
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Files  <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
-                                <li><a onclick="newFile();">New...</a></li>
-                                <li><a onclick="FileManager.removeFile();">Remove</a></li>
-                                <li><a onclick="renameFile();">Rename...</a></li>
+                                <li><a onclick="newFile();">New File...</a></li>
+                                <li><a onclick="FileManager.removeFile();">Remove This File</a></li>
+                                <li><a onclick="renameFile();">Rename This File...</a></li>
                                 <li class="divider"></li>
-                                <li><a onclick="FileManager.setMainFile();">Set Main file</a></li>
+                                <li><a onclick="FileManager.setMainFile();">Make this the Main file</a></li>
                             </ul>
                         </li>
+                        
+                        <!-- Run the program! -->
                         <li><p class="navbar-btn"><a class="btn btn-success btn-block" role="button" onclick="runCode();">Run</a></p></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
         </nav>
 
+        <!-- The main display -->
         <div class="container-fluid fillit belowheader abovebottom noscroll">
            <div class="row no-pad fillit">
+               <!-- a list to select files to display -->
                 <div id="filesList" class="list-group file-List scrollable">
                 </div>
+               
+                <!-- the main file editor -->
                 <div class="col-md-auto fillit">
                     <pre id="editor" class="fillit"></pre>
                 </div>
@@ -79,7 +94,7 @@
         </div><!-- /.container -->
 
 
-
+        <!-- Hidden modal to display output from program execution -->
         <div class="modal fade" id="outputModal" tabindex="-1" role="dialog">
             <div class="modal-dialog  modal-lg" role="document">
                 <div class="modal-content">
@@ -104,10 +119,11 @@
         <script src="ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
 
         <script>     
-                     
+            /*
+             * Initialize the program editor and files
+             */
+            
             // Setup ace text editor
-
-            //var $ = document.getElementById.bind(document);
             var dom = require("ace/lib/dom");
             
             var editor = ace.edit("editor");
@@ -140,19 +156,22 @@
             
             // Check get parameters
             var params = new URLSearchParams(window.location.search);
+            
+            // If the url contains a GIST id
             if (params.has('gist')) {
+                // Download files from gist.github
                 FileManager.loadFromGist(params.get('gist'));
             }
             else {
-                // Create a sample file
+                // otherwise, create a sample file
                 var mainFile = new SourceFile();
                 mainFile.name = "Main.java";
                 mainFile.contents = 
-    "public class Main { \n\
-        public static void main(String[] args) { \n\
-            System.out.println(\"Hello World\"); \n\
-        } \n\
-    }";
+"public class Main {\n\
+    public static void main(String[] args) {\n\
+        System.out.println(\"Hello World\");\n\
+    }\n\
+}";
                 // Add the sample file to the filemanager
                 FileManager.addFile(mainFile);
                 FileManager.setMainFile(mainFile.name);
@@ -196,6 +215,9 @@
                 return value;
             }
         </script>
+        
+        <script src="HelloAPIkey.js" type="text/javascript"></script>
+        <!-- the program runner API -->
         <script src="runcode.js" type="text/javascript"></script>
     </body>
 </html>
