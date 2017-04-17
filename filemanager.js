@@ -61,6 +61,12 @@ var FileManager = new function() {
         this.updateDisplay();
     };
     
+    this.empty = function() {
+        this.files = [];
+        this.currentFile = null;
+        this.mainFile = "";
+    };
+    
     /*
      * Replace the contents of a file in the manager, if no file is
      * provided, updates the currently selected file
@@ -155,18 +161,26 @@ var FileManager = new function() {
      * respectively
      */
     this.updateDisplay = function() {
+        // If an editor has been assigned, load the contents of the current file
+        // into the editor.
         if (this.editor !== null && this.currentFile !== null) {
             this.editor.setValue(this.currentFile.contents, 1);
         }
         
+        // If a filelist has been assigned, add buttons to select each of the
+        // files to the list
         if (this.filelist !== null) {
+            // Clear out the list
             this.filelist.empty();
             
+            // For every file
             for (var i = 0; i < this.files.length; i++) {
+                // Add a new element to the file list whith the file's name
                 var f = document.createElement('a');
                 $(f).text(this.files[i].name)
                     .addClass('list-group-item');
                 
+                // If this file is the main file, add a marker
                 if (this.files[i].name === this.mainFile) {
                     var star = document.createElement('span');
                     $(star).addClass('glyphicon')
@@ -175,51 +189,65 @@ var FileManager = new function() {
                     $(f).html($(star).prop('outerHTML') + '&nbsp;' + $(f).text());
                 }
                 
+                // If this is the current file
                 if (this.files[i] === this.currentFile) {
+                    // Hilight it in the list
                     $(f).addClass('active');
                 }
                 else {
+                    // otherwise, make the list item select the file
                     $(f).addClass('list-group-action')
                         .attr('data-filename', this.files[i].name)
                         .click(function() {
                             FileManager.setCurrentFile($(this).attr('data-filename'));    
                         });
                 }
+                
+                //Add the element to the end of the list 
                 $(this.filelist).append(f);
             }
             
+            // Hide the file list if there is only one file
             if (this.files.length <= 1) {
                 $(this.filelist).hide("fast");
             }
             else {
+                // Show the list if there is more than one file
                 $(this.filelist).show("fast").css("display", "inline-block");
             }
         }
     };
     
-    this.loadFromGist = function(gist) {
+    /*
+     * Download all of the files from a Gist, chosen by id
+     */
+    this.loadFromGist = function(gist, errorhandler) {
         function handleGist(data) {
+            // Extract each of the files in the gist
             Object.keys(data.files).map(function(key){
                 var gistFile = new SourceFile(key, data.files[key].content);
                 
+                // add the file to the file manager
                 FileManager.addFile(gistFile);
+                
+                // if the file has a main method
                 var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
                 if (isMain.test(gistFile.contents)) {
+                    // Set the main file
                     FileManager.setMainFile(gistFile.name);
-                    
-                    console.log(gistFile.name);
                 }
-                
             });
         }
         
+        // Download the files from the gist asynchronously
         $.ajax({
             url: 'https://api.github.com/gists/' + gist,
             type: 'get',
             dataType: 'json',
             cache: true,
             success: handleGist,
-            async: true
+            async: true,
+            error: errorhandler
         });
     };
 };

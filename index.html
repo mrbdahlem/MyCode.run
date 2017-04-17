@@ -67,8 +67,9 @@
                                 <li><a onclick="newFile();">New File...</a></li>
                                 <li><a onclick="FileManager.removeFile();">Remove This File</a></li>
                                 <li><a onclick="renameFile();">Rename This File...</a></li>
-                                <li class="divider"></li>
                                 <li><a onclick="FileManager.setMainFile();">Make this the Main file</a></li>
+                                <li class="divider"></li>
+                                <li><a onclick="loadGist();">Load Gist...</a></li>
                             </ul>
                         </li>
                         
@@ -160,7 +161,9 @@
             // If the url contains a GIST id
             if (params.has('gist')) {
                 // Download files from gist.github
-                FileManager.loadFromGist(params.get('gist'));
+                FileManager.loadFromGist(params.get('gist'), function(x, txtStatus, error) {
+                            alert(txtStatus + " error retrieving gist " + error);
+                        });
             }
             else {
                 // otherwise, create a sample file
@@ -182,7 +185,7 @@
              * add the new file to the file manager.
              */
             function newFile() {
-                var filename = getFileName("New file name:");
+                var filename = getUserInput("New file name:");
                 
                 if (filename !== null) {
                     var file = new SourceFile(filename);
@@ -194,7 +197,7 @@
              * Rename the current file, prompting the user for the new name
              */
             function renameFile() {
-                var filename = getFileName("New file name:", FileManager.getFile().name);
+                var filename = getUserInput("New file name:", FileManager.getFile().name);
                 
                 if (filename !== null) {
                     FileManager.renameFile(filename);
@@ -202,10 +205,10 @@
             }
             
             /*
-             * Prompt the user for a file name, looping until something is
+             * Prompt the user for a string, looping until something is
              * entered or cancel is pressed
              */
-            function getFileName(promptText, defaultval) {
+            function getUserInput(promptText, defaultval) {
                 var value = "";
                 
                 while (value === "") {
@@ -213,6 +216,21 @@
                 }
                 
                 return value;
+            }
+            
+            /*
+             * Prompt the user for a GIST id and load the files from that gist
+             */
+            function loadGist() {
+                var gist = getUserInput("Enter the GIST id:\n(Downloaded files will replace all files in this code run)",
+                                        "d46e26557c78d3a981afb2f06b4d7f04");
+                
+                if (gist !== null) {
+                    FileManager.empty();
+                    FileManager.loadFromGist(gist, function(x, txtStatus, error) {
+                            alert(txtStatus + " error retrieving gist " + error);
+                        });
+                }   
             }
         </script>
         
