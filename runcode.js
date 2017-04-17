@@ -57,12 +57,14 @@ function runCode() {
     
     // Record the current time to calculate how long the request takes
     var start = new Date().getTime();
+    var timer = displayElapsedTime($('#exTime'), start);
     
     // Make the compile-run request
     apigClient.helloFunctionPost(params, body, additionalParams)
         .then(function(result){
             // If the request returns properly...
             // calculate and display the execution time
+            clearInterval(timer);
             var timeDiff = (new Date().getTime()) - start;
             $('#exTime').html('Execution time: ' + (timeDiff) + 'ms');
             
@@ -78,6 +80,7 @@ function runCode() {
         }).catch(function(result){
             // If the request did not return properly...
             // calculate and display the execution time
+            clearInterval(timer);
             var timeDiff = (new Date().getTime()) - start;
             $('#exTime').html('Execution time: ' + (timeDiff) + 'ms');
             
@@ -85,4 +88,11 @@ function runCode() {
             $('#outputModalTitle').text('Execution Failed');
             $('#outputModalBody').html('<p>Failure communicating with server</p>');
         });
+}
+
+function displayElapsedTime (el, start) {
+    return setInterval(function() {
+            var timeDiff = Math.round(((new Date().getTime()) - start) / 100) * 100;
+            el.html('Execution time: ' + (timeDiff) + 'ms');
+        }, 100);
 }

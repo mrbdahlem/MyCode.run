@@ -40,7 +40,6 @@ container {
 .ace_editor {
     border: 1px solid lightgray;
     margin: auto;
-
 }
 
 .ace_editor.fullScreen {

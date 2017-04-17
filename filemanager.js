@@ -32,7 +32,7 @@ var FileManager = new function() {
             return this.currentFile;
         }
         return this.files[num];
-    }
+    };
     
     /*
      * Remove a file from the manager by its name.  if no name is provided,
@@ -171,8 +171,7 @@ var FileManager = new function() {
                     $(star).addClass('glyphicon')
                            .addClass('glyphicon-play-circle');
                    
-                    $(f).html($(f).text() + '&nbsp;');
-                    $(f).append(star);
+                    $(f).html($(star).prop('outerHTML') + '&nbsp;' + $(f).text());
                 }
                 
                 if (this.files[i] === this.currentFile) {
