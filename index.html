@@ -241,14 +241,8 @@
                       
                     var params = new URLSearchParams(window.location.search);
                     params.set('gist', gist);
-                    var url = window.location.protocol +
-                              '//' +
-                              window.location.host +
-                              window.location.pathname +
-                              '?' +
-                              params.toString();
                     
-                    History.pushState(null, null, url);
+                    History.pushState(null, document.title, `${location.pathname}?${params}`);
                 }   
             }
         </script>
