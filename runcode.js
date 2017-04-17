@@ -9,7 +9,6 @@ function runCode() {
     $('#exTime').html('Execution time: ___ ms');
     $('#outputModal').modal('show');
     
-
     var display = ace.edit("output");
     display.setTheme("ace/theme/terminal");
     display.$blockScrolling = Infinity;
@@ -23,23 +22,23 @@ function runCode() {
                         fontSize: "12pt"
                     });
 
-    var className = $("#mainClass").val();
-    if (className === "" || className === undefined) className = "Main";
-    
+        
     var body = {
         version: 1,
         compile: {
             version: 1,
-            mainClass: className,
-            sourceFiles: [
-                            {
-                                name: className + '.java',
-                                contents: editor.getValue().split(/\r?\n/)
-                            }
-                        ]
+            mainClass: FileManager.getMainFile().replace(/\.[^/.]+$/, ""),
+            sourceFiles: []
         },
         "test-type": "run"
     };
+    
+    for (var i = 0; i < FileManager.getNumFiles(); i++) {
+        var file = {};
+        file.name = FileManager.getFile(i).name;
+        file.contents = FileManager.getFile(i).contents.split(/\r?\n/);
+        body.compile.sourceFiles.push(file);
+    }
     
     var params = {
         "Content-Type": "application/json",
