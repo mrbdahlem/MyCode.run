@@ -66,14 +66,12 @@
             </div>
         </nav>
 
-        <div class="container-fluid">
-            <p>Enter your Java code below, make sure that your main class is identified, then click "Run" to try it out.</p>
-            
-            <div class="row no-pad">
-                <div id="filesList" class="list-group file-List">
+        <div class="container-fluid fillit belowheader abovebottom noscroll">
+           <div class="row no-pad fillit">
+                <div id="filesList" class="list-group file-List scrollable">
                 </div>
-                <div class="col-md-auto">
-                    <pre id="editor"></pre>
+                <div class="col-md-auto fillit">
+                    <pre id="editor" class="fillit"></pre>
                 </div>
             </div> <!-- editor row -->
         </div><!-- /.container -->
@@ -115,8 +113,8 @@
             editor.session.setMode("ace/mode/java");
             editor.$blockScrolling = Infinity;
             editor.setOptions({
-                maxLines: 30,
-                minLines: 10,
+                //maxLines: 30,
+                //minLines: 10,
                 fontFamily: "Inconsolata",
                 fontSize: "12pt"
             });
@@ -159,7 +157,7 @@
             function newFile() {
                 var filename = getFileName("New file name:");
                 
-                if (filename != null) {
+                if (filename !== null) {
                     var file = new SourceFile(filename);
                     FileManager.addFile(file);
                 }
@@ -171,7 +169,7 @@
             function renameFile() {
                 var filename = getFileName("New file name:", FileManager.getFile().name);
                 
-                if (filename != null) {
+                if (filename !== null) {
                     FileManager.renameFile(filename);
                 }
             }
