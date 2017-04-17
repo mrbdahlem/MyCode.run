@@ -21,6 +21,7 @@ var FileManager = new function() {
     this.addFile = function(file) {
         this.files.push(file);
         this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
+        this.setCurrentFile(file.name);
         this.updateDisplay();
     };
     
