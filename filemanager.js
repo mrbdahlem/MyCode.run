@@ -30,10 +30,14 @@ var FileManager = new function() {
                 this.files.splice(i, 1);
             }
         }
-        
+                
         if (this.files.length === 0) {
             this.files.push(new SourceFile("New.java"));
             this.mainFile = "New.java";
+        }
+        
+        if (this.mainFile === filename) {
+            this.mainFile = this.files[0].name;
         }
         
         this.currentFile = this.files[0];
@@ -135,6 +139,13 @@ var FileManager = new function() {
                         });
                 }
                 $(this.filelist).append(f);
+            }
+            
+            if (this.files.length <= 1) {
+                $(this.filelist).hide("fast");
+            }
+            else {
+                $(this.filelist).show("fast");
             }
         }
     };
