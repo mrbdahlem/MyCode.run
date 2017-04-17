@@ -155,7 +155,7 @@ var FileManager = new function() {
      * respectively
      */
     this.updateDisplay = function() {
-        if (this.editor !== null) {
+        if (this.editor !== null && this.currentFile !== null) {
             this.editor.setValue(this.currentFile.contents, 1);
         }
         
@@ -195,6 +195,32 @@ var FileManager = new function() {
                 $(this.filelist).show("fast").css("display", "inline-block");
             }
         }
+    };
+    
+    this.loadFromGist = function(gist) {
+        function handleGist(data) {
+            Object.keys(data.files).map(function(key){
+                var gistFile = new SourceFile(key, data.files[key].content);
+                
+                FileManager.addFile(gistFile);
+                var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
+                if (isMain.test(gistFile.contents)) {
+                    FileManager.setMainFile(gistFile.name);
+                    
+                    console.log(gistFile.name);
+                }
+                
+            });
+        }
+        
+        $.ajax({
+            url: 'https://api.github.com/gists/' + gist,
+            type: 'get',
+            dataType: 'json',
+            cache: true,
+            success: handleGist,
+            async: true
+        });
     };
 };
 
