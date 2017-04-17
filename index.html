@@ -27,6 +27,8 @@
         <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
         <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
         <script type="text/javascript" src="apigClient.js"></script>
+        
+        <!-- Source File management -->
         <script type="text/javascript" src="filemanager.js"></script>
         
         <!-- Logo font -->
@@ -115,9 +117,13 @@
 
         <!-- jquery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <!-- Latest compiled and minified JavaScript -->
+        <!-- Bootstrap compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!-- ace editor -->
         <script src="ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
+        <!-- Browser History management -->
+        <script src="lib/jquery.history.js"></script>
+        
 
         <script>     
             /*
@@ -230,6 +236,19 @@
                     FileManager.loadFromGist(gist, function(x, txtStatus, error) {
                             alert(txtStatus + " error retrieving gist " + error);
                         });
+                    
+                    //var stateObject = { d: true}; // dummy state
+                      
+                    var params = new URLSearchParams(window.location.search);
+                    params.set('gist', gist);
+                    var url = window.location.protocol +
+                              '//' +
+                              window.location.host +
+                              window.location.pathname +
+                              '?' +
+                              params.toString();
+                    
+                    History.pushState(null, null, url);
                 }   
             }
         </script>
