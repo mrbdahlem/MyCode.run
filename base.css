@@ -44,3 +44,17 @@ container {
   padding-right:0;
   padding-left:0;
 }
+
+@media (min-width: 768px) {
+    .file-List {
+        float: left;
+        max-width: 200px;
+        overflow-wrap: break-word;
+    }
+}
+
+@media (max-width: 767px) {
+    .file-List{
+        width: 100%;
+    }
+}

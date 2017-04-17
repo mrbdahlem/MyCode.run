@@ -192,7 +192,7 @@ var FileManager = new function() {
                 $(this.filelist).hide("fast");
             }
             else {
-                $(this.filelist).show("fast");
+                $(this.filelist).show("fast").css("display", "inline-block");
             }
         }
     };
