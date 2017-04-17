@@ -50,6 +50,10 @@ var FileManager = new function() {
     
     this.renameFile = function(newName, file) {
         file = file || this.currentFile;
+        
+        if (file.name === this.mainFile) {
+            this.mainFile = newName;
+        }
                 
         if (file !== null) {
             file.name = newName;

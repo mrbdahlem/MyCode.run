@@ -63,7 +63,7 @@ function runCode() {
             }
             
             $('#modalTitle').text('Execution ' + success);
-            display.setValue(returntext);
+            display.setValue(returntext, 1);
             
         }).catch(function(result){
             var timeDiff = (new Date().getTime()) - start;
