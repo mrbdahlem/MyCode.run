@@ -5,7 +5,7 @@ var FileManager = new function() {
     this.files = [];
     this.currentFile = null;
     this.mainFile = "";
-    this.filelist = null;
+    this.filelist = [];
     this.editor = null;
     
     /*
@@ -142,8 +142,8 @@ var FileManager = new function() {
     /*
      * Set the DOM element that will hold a list of files in the manager
      */
-    this.setFileList = function(el) {
-        this.filelist = $(el);
+    this.addFileList = function(el) {
+        this.filelist.push($(el));
         
         this.updateDisplay();
     };
@@ -169,9 +169,9 @@ var FileManager = new function() {
         
         // If a filelist has been assigned, add buttons to select each of the
         // files to the list
-        if (this.filelist !== null) {
+        this.filelist.forEach(function(element){
             // Clear out the list
-            this.filelist.empty();
+            element.empty();
             
             // For every file
             for (var i = 0; i < this.files.length; i++) {
@@ -204,18 +204,18 @@ var FileManager = new function() {
                 }
                 
                 //Add the element to the end of the list 
-                $(this.filelist).append(f);
+                element.append(f);
             }
             
             // Hide the file list if there is only one file
             if (this.files.length <= 1) {
-                $(this.filelist).hide("fast");
+                element.hide("fast");
             }
             else {
                 // Show the list if there is more than one file
-                $(this.filelist).show("fast").css("display", "inline-block");
+                element.show("fast").css("display", "inline-block");
             }
-        }
+        }, this);
     };
     
     /*

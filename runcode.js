@@ -56,6 +56,10 @@ function runCode() {
     // Record the current time to calculate how long the request takes
     var start = new Date().getTime();
     var timer = displayElapsedTime($('#exTime'), start);
+    $('#outputModal').on('hide.bs.modal', function(e) {
+        clearInterval(timer);
+    });
+    
     
     // Make the compile-run request
     apigClient.helloFunctionPost(params, body, additionalParams)

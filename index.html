@@ -48,7 +48,7 @@
             <div class="container-fluid">
                 <div class="navbar-header">
                     <!-- winking monkey logo and brand -->
-                    <span class="navbar-brand" style="padding-top: 10px"><img src="winkingmonkey.svg" height="32" style="display: inline-block;" align="middle">&nbsp;myCode.run();</span>
+                    <span class="navbar-brand" style="padding-top: 10px"><img src="winkingmonkey.svg" height="32" style="display: inline-block;" align="middle"><span class="appname">&nbsp;myCode.run();</span></span>
                     
                     <!-- the hamburger expand/collapse button for small screens -->
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -63,8 +63,8 @@
                 <div id="navbar" class="collapse navbar-collapse navbar-right">                    
                     <ul class="nav navbar-nav" style="margin-right: 0px; margin-left: 0px">
                         <!-- Main file menu -->
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Files  <span class="caret"></span></a>
+                        <li class="dropdown projectmenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Project<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a onclick="newFile();">New File...</a></li>
                                 <li><a onclick="FileManager.removeFile();">Remove This File</a></li>
@@ -73,10 +73,17 @@
                                 <li class="divider"></li>
                                 <li><a onclick="loadGist();">Load Gist...</a></li>
                             </ul>
+                        <li class="dropdown filemenulist">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded=false">Files<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <ul id="filemenuList"></ul>
+                                </li>
+                            </ul>
                         </li>
                         
                         <!-- Run the program! -->
-                        <li><p class="navbar-btn"><a class="btn btn-success btn-block" role="button" onclick="runCode();">Run</a></p></li>
+                        <li><p class="navbar-btn"><a class="btn btn-success btn-block runButton" role="button" onclick="runCode();">Run</a></p></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -86,9 +93,10 @@
         <div class="container-fluid fillit belowheader abovebottom noscroll">
            <div class="row no-pad fillit">
                <!-- a list to select files to display -->
+               <div class="body-filelist">
                 <div id="filesList" class="list-group file-List scrollable">
                 </div>
-               
+               </div>
                 <!-- the main file editor -->
                 <div class="col-md-auto fillit">
                     <pre id="editor" class="fillit"></pre>
@@ -159,10 +167,19 @@
             // Connect changes in editor to whatever file is being edited
             editor.on('change', function() { FileManager.updateFile(editor.getValue()); });
             FileManager.setEditor(editor);
-            FileManager.setFileList("#filesList");
+            FileManager.addFileList("#filesList");
+            FileManager.addFileList("#filemenuList");
             
             // Check get parameters
             var params = new URLSearchParams(window.location.search);
+            
+            if (params.has('norun')) {
+                $('.runButton').hide();
+            }
+            
+            if (params.has('noproject')) {
+                $('.projectmenu').hide();
+            }
             
             // If the url contains a GIST id
             if (params.has('gist')) {
