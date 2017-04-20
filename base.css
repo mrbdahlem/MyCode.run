@@ -120,10 +120,6 @@ container {
         padding-right: 0px;
         padding-left: 0px;
     }
-    
-    .navbar-brand {
-        margin-left: 15px; 
-    }
 }
 
 @media screen and (min-width: 768px),
@@ -150,8 +146,8 @@ container {
     padding-right: 0px;
     padding-left: 0px;
 }
-    
-.in-iframe .navbar-header {
-    margin-left: 15px;
-    margin-right: 15px; 
+   
+.in-iframe .navbar {
+    padding-left: 15px;
+    padding-right: 15px; 
 }
