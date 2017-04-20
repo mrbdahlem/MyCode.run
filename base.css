@@ -95,7 +95,6 @@ container {
 }
 
 @media screen and (max-width: 768px) and (max-height: 500px){
-
     .filemenulist {
         display: list-item;
     }
@@ -152,7 +151,7 @@ container {
     padding-left: 0px;
 }
     
-.in-iframe .navbar-brand {
-    margin-left: 15px; 
+.in-iframe .navbar-header {
+    margin-left: 15px;
+    margin-right: 15px;
 }
-
