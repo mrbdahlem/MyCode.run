@@ -264,7 +264,7 @@
                 
                 if (gist !== null) {
                     FileManager.empty();
-                    FileManager.loadFromGist(gist, function(x, txtStatus, error) {
+                    FileManager.loadFromGist(gist, null, function(x, txtStatus, error) {
                             alert(txtStatus + " error retrieving gist " + error);
                         });
                     
