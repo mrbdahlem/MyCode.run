@@ -186,11 +186,12 @@
                 var main = null;
                 
                 if (params.has('main')) {
-                    main = params.get('main');
+                    main = decodeURI(params.get('main'));
+                    console.log('Main class: ' + main);
                 }
                 
                 // Download files from gist.github
-                FileManager.loadFromGist(params.get('gist'), main, function(x, txtStatus, error) {
+                FileManager.loadFromGist(decodeURI(params.get('gist')), main, function(x, txtStatus, error) {
                             alert(txtStatus + " error retrieving gist " + error);
                         });
             }
