@@ -221,8 +221,15 @@ var FileManager = new function() {
     /*
      * Download all of the files from a Gist, chosen by id
      */
-    this.loadFromGist = function(gist, errorhandler) {
+    this.loadFromGist = function(gist, main, errorhandler) {
+
         function handleGist(data) {
+        // If a main file was specified, set it
+            if (main !== null) {
+                FileManager.setMainFile(main);
+            }
+            
+            
             // Extract each of the files in the gist
             Object.keys(data.files).map(function(key){
                 var gistFile = new SourceFile(key, data.files[key].content);
@@ -230,15 +237,27 @@ var FileManager = new function() {
                 // add the file to the file manager
                 FileManager.addFile(gistFile);
                 
-                // if the file has a main method
-                var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
-                if (isMain.test(gistFile.contents)) {
-                    // Set the main file
-                    FileManager.setMainFile(gistFile.name);
+                // check if a main method was specified
+                if (main === null) {
+                    // if not, check if the file has a main method
+                    var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
+                    if (isMain.test(gistFile.contents)) {
+                        // Set the main file if it does
+                        FileManager.setMainFile(gistFile.name);
+                        console.log('No main class specified. ' + gistFile.name + ' chosen.');
+                        main = gistFile.name;
+                    }
                 }
             });
+            
+            if (main !== null) {
+                FileManager.setCurrentFile(main);
+            }
+            else {
+                FileManager.setCurrentFile(FileManager.getFile(0).name);
+            }
         }
-        
+            
         // Download the files from the gist asynchronously
         $.ajax({
             url: 'https://api.github.com/gists/' + gist,

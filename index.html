@@ -183,8 +183,14 @@
             
             // If the url contains a GIST id
             if (params.has('gist')) {
+                var main = null;
+                
+                if (params.has('main')) {
+                    main = params.get('main');
+                }
+                
                 // Download files from gist.github
-                FileManager.loadFromGist(params.get('gist'), function(x, txtStatus, error) {
+                FileManager.loadFromGist(params.get('gist'), main, function(x, txtStatus, error) {
                             alert(txtStatus + " error retrieving gist " + error);
                         });
             }

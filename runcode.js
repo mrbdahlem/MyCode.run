@@ -21,7 +21,8 @@ function runCode() {
                         highlightActiveLine: false,
                         highlightGutterLine: false,
                         fontFamily: "Inconsolata",
-                        fontSize: "12pt"
+                        fontSize: "12pt",
+                        wrap: true
                     });
 
                  
