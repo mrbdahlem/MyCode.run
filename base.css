@@ -138,3 +138,21 @@ container {
         display: inline;
     }
 }
+
+.in-iframe .belowheader {
+    border-top: 50px solid white;
+}
+
+.in-iframe .abovebottom {
+    border-bottom: 0px solid white;
+}
+    
+.in-iframe .container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+    
+.in-iframe .navbar-brand {
+    margin-left: 15px; 
+}
+

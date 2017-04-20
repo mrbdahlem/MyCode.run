@@ -170,6 +170,13 @@
             FileManager.addFileList("#filesList");
             FileManager.addFileList("#filemenuList");
             
+            // Detect if this page is embedded in another, add css if so
+            $(function() {
+                if (window.self != window.top) {
+                    $(document.body).addClass("in-iframe");
+                }
+            });
+            
             // Check get parameters
             var params = new URLSearchParams(window.location.search);
             
