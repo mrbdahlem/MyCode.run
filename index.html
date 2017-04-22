@@ -192,6 +192,11 @@
                 $('.projectmenu').hide();
             }
             
+            if (params.has('nofiles')) {
+                $('.body-filelist').hide();
+                $('.filemenulist').hide();
+            }
+            
             // If the url contains a GIST id
             if (params.has('gist')) {
                 var main = null;
