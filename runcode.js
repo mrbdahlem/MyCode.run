@@ -26,15 +26,25 @@ function runCode() {
                         fontSize: "12pt",
                         wrap: true
                     });
-
-                 
+    
+    var mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
+    var pkgReg = /package\s+([\w\.]+)\s*;/;
+    var packageName = pkgReg.exec(FileManager.getMainFile().contents);
+    
+    if (packageName !== null && packageName.length >= 2) {
+        mainName = packageName[1] + "." + mainName;
+    }
+        
+    console.log(mainName);
+    $('#outputModalTitle').text('Compiling and running ' + mainName + '...');
+    
     // Prepare the request to run the code
     // Set up the request body for a compile-run request
     var body = {
         version: 1,
         compile: {
             version: 1,
-            mainClass: FileManager.getMainFile().name.replace(/\.[^/.]+$/, ""),
+            mainClass: mainName,
             sourceFiles: []
         },
         "test-type": "run"
@@ -57,7 +67,6 @@ function runCode() {
     $('#outputModal').on('hide.bs.modal', function(e) {
         clearInterval(timer);
     });
-    
     
     // Make the compile-run request
     apigClient.helloFunctionPost(params, body, additionalParams)
@@ -91,15 +100,6 @@ function runCode() {
 }
 
 function addAllFiles(folder, list) {
-    /*
-    for (var i = 0; i < FileManager.getNumFiles(); i++) {
-        var file = {};
-        file.name = FileManager.getFile(i).name;
-        file.contents = FileManager.getFile(i).contents.split(/\r?\n/);
-        body.compile.sourceFiles.push(file);
-    }
-    */
-    
     folder.folders.forEach(function(subfolder) {
        addAllFiles(subfolder, list); 
     });
@@ -115,8 +115,6 @@ function addAllFiles(folder, list) {
         }
         
         path = path + file.name;
-        
-        console.log(path);
         
         var sourceFile = {};
         sourceFile.name = path;
