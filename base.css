@@ -156,3 +156,24 @@ container {
     padding-left: 15px;
     padding-right: 15px; 
 }
+
+.nav-list {
+    padding-left: 10px;
+}
+
+.file-List {
+    padding-left: 0px;
+    padding-right: 15px;
+}
+
+.list-root {
+    padding-left: 0px;
+}
+
+.listFile {
+    font-weight: normal;
+}
+
+.active {
+    background-color: #337ab7;
+}

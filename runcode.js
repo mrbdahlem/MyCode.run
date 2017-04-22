@@ -1,3 +1,5 @@
+/* global FileManager, Infinity, ace, HELLO_API_KEY, apigClientFactory, FileManger */
+
 function runCode() {
     // Create a client using the public API key
     var apigClient = apigClientFactory.newClient({
@@ -24,27 +26,32 @@ function runCode() {
                         fontSize: "12pt",
                         wrap: true
                     });
-
-                 
+    
+    var mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
+    var pkgReg = /package\s+([\w\.]+)\s*;/;
+    var packageName = pkgReg.exec(FileManager.getMainFile().contents);
+    
+    if (packageName !== null && packageName.length >= 2) {
+        mainName = packageName[1] + "." + mainName;
+    }
+        
+    console.log(mainName);
+    $('#outputModalTitle').text('Compiling and running ' + mainName + '...');
+    
     // Prepare the request to run the code
     // Set up the request body for a compile-run request
     var body = {
         version: 1,
         compile: {
             version: 1,
-            mainClass: FileManager.getMainFile().replace(/\.[^/.]+$/, ""),
+            mainClass: mainName,
             sourceFiles: []
         },
         "test-type": "run"
     };
     
     // Add the files in the global file manager to the request body.
-    for (var i = 0; i < FileManager.getNumFiles(); i++) {
-        var file = {};
-        file.name = FileManager.getFile(i).name;
-        file.contents = FileManager.getFile(i).contents.split(/\r?\n/);
-        body.compile.sourceFiles.push(file);
-    }
+    addAllFiles(FileManager.getRootFolder(), body.compile.sourceFiles);
     
     // Add parameters for the request
     var params = {
@@ -60,7 +67,6 @@ function runCode() {
     $('#outputModal').on('hide.bs.modal', function(e) {
         clearInterval(timer);
     });
-    
     
     // Make the compile-run request
     apigClient.helloFunctionPost(params, body, additionalParams)
@@ -91,6 +97,30 @@ function runCode() {
             $('#outputModalTitle').text('Execution Failed');
             $('#outputModalBody').html('<p>Failure communicating with server</p>');
         });
+}
+
+function addAllFiles(folder, list) {
+    folder.folders.forEach(function(subfolder) {
+       addAllFiles(subfolder, list); 
+    });
+    
+    folder.files.forEach(function(file) {
+        var path = "";
+        var parent = file.parent;
+        var root = FileManager.getRootFolder();
+        
+        while (parent !== root) {
+            path = parent.getName() + "/" + path;
+            parent = parent.getParent();
+        }
+        
+        path = path + file.name;
+        
+        var sourceFile = {};
+        sourceFile.name = path;
+        sourceFile.contents = file.contents.split(/\r?\n/);
+        list.push(sourceFile);
+    });
 }
 
 function displayElapsedTime (el, start) {
