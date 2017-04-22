@@ -9,6 +9,26 @@ var FileManager = new function() {
     this.fileDisplays = [];
     this.editor = null;
     
+   /*
+     * Add a file to the current folder
+     */
+    this.addFile = function(file) {
+        this.currentFolder.addFile(file);
+        this.setCurrentFile(file);
+        this.updateDisplay();
+    };
+    
+    /*
+     * Add a subfolder to the current folder
+     */
+    this.addFolder = function(folder) {
+        this.currentFolder.addFolder(folder); 
+        this.currentFolder = folder;
+        this.currentFile = null;
+        
+        this.updateDisplay();
+    };
+    
     /*
      * Remove a file from the manager.  if no file is provided,
      * remove the currently selected file.
@@ -44,7 +64,7 @@ var FileManager = new function() {
         
         this.updateDisplay();
     };
-    
+
     /*
      * Remove all files and folders from this project
      */
@@ -55,12 +75,40 @@ var FileManager = new function() {
     };
     
     /*
-     * Add a file to the current folder
+     * Making a file the currently selected file
      */
-    this.addFile = function(file) {
-        this.currentFolder.addFile(file);
-        this.setCurrentFile(file);
+    this.setCurrentFile = function(file) {
+        this.currentFile = file;
+    };
+    
+    /*
+     * Making a folder the currently selected folder
+     */
+    this.setCurrentFolder = function(folder) {
+        this.currentFolder = folder;
+    };
+    
+    /*
+     * Get a reference to the currently selected folder
+     */
+    this.getCurrentFolder = function() {
+        return this.currentFolder;
+    };
+    
+    /*
+     * Select the main file to be run]
+     */
+    this.setMainFile = function(file) {
+        this.mainFile = file || this.currentFile;
+        
         this.updateDisplay();
+    };
+    
+    /*
+     * Retrieve the main file.
+     */
+    this.getMainFile = function() {
+        return this.mainFile;
     };
     
     /*
@@ -71,14 +119,10 @@ var FileManager = new function() {
     };
     
     /*
-     * Add a subfolder to the current folder
+     * Get the contents of a file based on its file name.
      */
-    this.addFolder = function(folder) {
-        this.currentFolder.addFolder(folder); 
-        this.currentFolder = folder;
-        this.currentFile = null;
-        
-        this.updateDisplay();
+    this.getFileContents = function(file) {
+        return file.contents;
     };
     
     /*
@@ -129,51 +173,7 @@ var FileManager = new function() {
         
         this.updateDisplay();
     };
-    
-    /*
-     * Get the contents of a file based on its file name.
-     */
-    this.getFileContents = function(file) {
-        return file.contents;
-    };
-    
-    /*
-     * Making a file the currently selected file
-     */
-    this.setCurrentFile = function(file) {
-        this.currentFile = file;
-    };
-    
-    /*
-     * Making a folder the currently selected folder
-     */
-    this.setCurrentFolder = function(folder) {
-        this.currentFolder = folder;
-    };
-    
-    /*
-     * Get a reference to the currently selected folder
-     */
-    this.getCurrentFolder = function() {
-        return this.currentFolder;
-    };
-    
-    /*
-     * Select the main file to be run]
-     */
-    this.setMainFile = function(file) {
-        this.mainFile = file || this.currentFile;
-        
-        this.updateDisplay();
-    };
-    
-    /*
-     * Retrieve the main file.
-     */
-    this.getMainFile = function() {
-        return this.mainFile;
-    };
-    
+
     /*
      * Add a DOM element which will hold a list of files in the manager
      */
@@ -399,6 +399,7 @@ function SourceFile(name, content) {
  * A class that represents a folder full of files / a package
  */
 function Folder(name, parent) {
+    // Establish the name of this folder
     if (name) {
         this.name = name;
     }
@@ -406,11 +407,13 @@ function Folder(name, parent) {
         this.name = "New Folder";
     }
     
+    // Link to the parent of this folder
     this.parent = null;
     if (parent) {
         this.parent = parent;
     }
     
+    // Lists of file and subfolders contained in this folder
     this.files = [];
     this.folders = [];
     
@@ -451,6 +454,15 @@ function Folder(name, parent) {
         this.files.push(file);
         this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
     };
+           
+    /*
+     * Add a subfolder to this folder
+     */
+    this.addFolder = function(folder) {
+        this.folders.push(folder);
+        this.folders.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
+        folder.parent = this;
+    };
     
     /*
      * Get the number of files stored in this folder
@@ -469,15 +481,35 @@ function Folder(name, parent) {
         return this.files[num];
     };
     
-    /*
-     * Add a subfolder to this folder
-     */
-    this.addFolder = function(folder) {
-        this.folders.push(folder);
-        this.folders.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
-        folder.parent = this;
         
-        //FileManager.updateDisplay();
+    /*
+     * Retrieve the number of subfolders in this folder
+     */
+    this.getNumFolders = function() {
+        return this.folders.length;
+    };
+    
+    /*
+     * retrieve a subfolder based on its index
+     */
+    this.getFolder = function(num) {
+        return this.folders[num];
+    };
+    
+    /*
+     * Remove the current folder
+     */
+    this.removeFile = function(file) {
+        var parent = file.parent;
+        
+        if (parent !== null) {
+            for (var i = 0; i < parent.files.length; i++) {
+                if (parent.files[i] === file) {
+                    parent.files.splice(i, 1);
+                    break;
+                }
+            }
+        }
     };
     
     /*
@@ -494,25 +526,8 @@ function Folder(name, parent) {
                 }
             }
         }
-        
-        //FileManager.updateDisplay();
     };
-    
-    
-    /*
-     * Retrieve the number of subfolders in this folder
-     */
-    this.getNumFolders = function() {
-        return this.folders.length;
-    };
-    
-    /*
-     * retrieve a subfolder based on its index
-     */
-    this.getFolder = function(num) {
-        return this.folders[num];
-    };
-       
+
     /*
      * remove all files and sub folders from this folder
      */

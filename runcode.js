@@ -27,15 +27,18 @@ function runCode() {
                         wrap: true
                     });
     
+    // Get the main class's actual name..
+    // drop the .java extension
     var mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
+    // Get the file's package name
     var pkgReg = /package\s+([\w\.]+)\s*;/;
     var packageName = pkgReg.exec(FileManager.getMainFile().contents);
-    
+    // Add the package name to the class's name
     if (packageName !== null && packageName.length >= 2) {
         mainName = packageName[1] + "." + mainName;
     }
         
-    console.log(mainName);
+    // Add the derived classname to the compiling message
     $('#outputModalTitle').text('Compiling and running ' + mainName + '...');
     
     // Prepare the request to run the code
@@ -51,7 +54,7 @@ function runCode() {
     };
     
     // Add the files in the global file manager to the request body.
-    addAllFiles(FileManager.getRootFolder(), body.compile.sourceFiles);
+    addAllSourceFiles(FileManager.getRootFolder(), body.compile.sourceFiles);
     
     // Add parameters for the request
     var params = {
@@ -99,12 +102,16 @@ function runCode() {
         });
 }
 
-function addAllFiles(folder, list) {
+// Add all source files to the request file list
+function addAllSourceFiles(folder, list) {
+    // Add all of the files from the this folder's subfolders to the request
     folder.folders.forEach(function(subfolder) {
        addAllFiles(subfolder, list); 
     });
     
+    // Add all of the files from this folder to the request
     folder.files.forEach(function(file) {
+        // Determine the full path for the file being added
         var path = "";
         var parent = file.parent;
         var root = FileManager.getRootFolder();
@@ -116,6 +123,8 @@ function addAllFiles(folder, list) {
         
         path = path + file.name;
         
+        // Create and add a file object with the full pathname and contents
+        // separated into individual lines
         var sourceFile = {};
         sourceFile.name = path;
         sourceFile.contents = file.contents.split(/\r?\n/);
@@ -123,6 +132,9 @@ function addAllFiles(folder, list) {
     });
 }
 
+/*
+ * Display time on the modal dialog as it elapses
+ */
 function displayElapsedTime (el, start) {
     return setInterval(function() {
             var timeDiff = Math.round(((new Date().getTime()) - start) / 100) * 100;
