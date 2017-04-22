@@ -1,3 +1,5 @@
+/* global FileManager, Infinity, ace, HELLO_API_KEY, apigClientFactory, FileManger */
+
 function runCode() {
     // Create a client using the public API key
     var apigClient = apigClientFactory.newClient({
@@ -32,19 +34,14 @@ function runCode() {
         version: 1,
         compile: {
             version: 1,
-            mainClass: FileManager.getMainFile().replace(/\.[^/.]+$/, ""),
+            mainClass: FileManager.getMainFile().name.replace(/\.[^/.]+$/, ""),
             sourceFiles: []
         },
         "test-type": "run"
     };
     
     // Add the files in the global file manager to the request body.
-    for (var i = 0; i < FileManager.getNumFiles(); i++) {
-        var file = {};
-        file.name = FileManager.getFile(i).name;
-        file.contents = FileManager.getFile(i).contents.split(/\r?\n/);
-        body.compile.sourceFiles.push(file);
-    }
+    addAllFiles(FileManager.getRootFolder(), body.compile.sourceFiles);
     
     // Add parameters for the request
     var params = {
@@ -91,6 +88,41 @@ function runCode() {
             $('#outputModalTitle').text('Execution Failed');
             $('#outputModalBody').html('<p>Failure communicating with server</p>');
         });
+}
+
+function addAllFiles(folder, list) {
+    /*
+    for (var i = 0; i < FileManager.getNumFiles(); i++) {
+        var file = {};
+        file.name = FileManager.getFile(i).name;
+        file.contents = FileManager.getFile(i).contents.split(/\r?\n/);
+        body.compile.sourceFiles.push(file);
+    }
+    */
+    
+    folder.folders.forEach(function(subfolder) {
+       addAllFiles(subfolder, list); 
+    });
+    
+    folder.files.forEach(function(file) {
+        var path = "";
+        var parent = file.parent;
+        var root = FileManager.getRootFolder();
+        
+        while (parent !== root) {
+            path = parent.getName() + "/" + path;
+            parent = parent.getParent();
+        }
+        
+        path = path + file.name;
+        
+        console.log(path);
+        
+        var sourceFile = {};
+        sourceFile.name = path;
+        sourceFile.contents = file.contents.split(/\r?\n/);
+        list.push(sourceFile);
+    });
 }
 
 function displayElapsedTime (el, start) {

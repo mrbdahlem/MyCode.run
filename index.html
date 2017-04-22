@@ -67,9 +67,13 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Project<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li><a onclick="newFile();">New File...</a></li>
-                                <li><a onclick="FileManager.removeFile();">Remove This File</a></li>
-                                <li><a onclick="renameFile();">Rename This File...</a></li>
+                                <li><a onclick="renameFile();">Rename this file...</a></li>
                                 <li><a onclick="FileManager.setMainFile();">Make this the Main file</a></li>
+                                <li><a onclick="FileManager.removeFile();">Remove this file</a></li>
+                                <li class="divider"></li>
+                                <li><a onclick="newFolder();">New Folder...</a></li>
+                                <li><a onclick="renameFolder();">Rename the current folder...</a></li>
+                                <li><a onclick="removeFolder();">Remove the current folder...</a></li>
                                 <li class="divider"></li>
                                 <li><a onclick="loadGist();">Load Gist...</a></li>
                             </ul>
@@ -94,7 +98,7 @@
            <div class="row no-pad fillit">
                <!-- a list to select files to display -->
                <div class="body-filelist">
-                <div id="filesList" class="list-group file-List scrollable">
+                <div id="filesList" class="file-List scrollable">
                 </div>
                </div>
                 <!-- the main file editor -->
@@ -167,8 +171,8 @@
             // Connect changes in editor to whatever file is being edited
             editor.on('change', function() { FileManager.updateFile(editor.getValue()); });
             FileManager.setEditor(editor);
-            FileManager.addFileList("#filesList");
-            FileManager.addFileList("#filemenuList");
+            FileManager.addFileDisplay("#filesList");
+            FileManager.addFileDisplay("#filemenuList");
             
             // Detect if this page is embedded in another, add css if so
             $(function() {
@@ -177,7 +181,7 @@
                 }
             });
             
-            // Check get parameters
+            // Check get url parameters
             var params = new URLSearchParams(window.location.search);
             
             if (params.has('norun')) {
@@ -213,9 +217,10 @@
     }\n\
 }";
                 // Add the sample file to the filemanager
+                FileManager.setCurrentFile(mainFile);
                 FileManager.addFile(mainFile);
-                FileManager.setMainFile(mainFile.name);
-            }
+                FileManager.setMainFile(mainFile);
+    }
             
             /*
              * Create a new source file, prompting the user for its name.  Then
@@ -238,6 +243,42 @@
                 
                 if (filename !== null) {
                     FileManager.renameFile(filename);
+                }
+            }
+            
+            /*
+             * Create a new source file, prompting the user for its name.  Then
+             * add the new file to the file manager.
+             */
+            function newFolder() {
+                var foldername = getUserInput("New folder name:");
+                
+                if (foldername !== null) {
+                    var folder = new Folder(foldername);
+                    FileManager.addFolder(folder);
+                }
+            }
+            
+            
+            /*
+             * Prompt the user to delete the current folder and its contents
+             */
+            function removeFolder() {
+                var doit = confirm("Really delete " + FileManager.getCurrentFolder().name + " and its contents?");
+                
+                if (doit) {
+                    FileManager.removeFolder();
+                }
+            }
+            
+            /*
+             * Rename the current file, prompting the user for the new name
+             */
+            function renameFolder() {
+                var foldername = getUserInput("New folder name:", FileManager.getCurrentFolder().name);
+                
+                if (foldername !== null) {
+                    FileManager.renameFolder(foldername);
                 }
             }
             
