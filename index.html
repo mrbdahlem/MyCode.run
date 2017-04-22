@@ -89,6 +89,7 @@
                         
                         <!-- Run the program! -->
                         <li><p class="navbar-btn"><a class="btn btn-success btn-block runButton" role="button" onclick="runCode();">Run</a></p></li>
+                        <li><p class="navbar-btn"><a class="btn btn-info btn-block testButton" role="button" onclick="testCode();">Test</a></p></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -187,6 +188,10 @@
             
             if (params.has('norun')) {
                 $('.runButton').hide();
+            }
+            
+            if (!params.has('test')) {
+                $('.testButton').hide();
             }
             
             if (params.has('noproject')) {
