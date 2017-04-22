@@ -14,6 +14,8 @@ var FileManager = new function() {
      */
     this.addFile = function(file) {
         this.currentFolder.addFile(file);
+        
+        // Display the new file
         this.setCurrentFile(file);
         this.updateDisplay();
     };
@@ -22,10 +24,11 @@ var FileManager = new function() {
      * Add a subfolder to the current folder
      */
     this.addFolder = function(folder) {
-        this.currentFolder.addFolder(folder); 
+        this.currentFolder.addFolder(folder);
+        
+        // Open the new folder
         this.currentFolder = folder;
         this.currentFile = null;
-        
         this.updateDisplay();
     };
     
@@ -36,13 +39,16 @@ var FileManager = new function() {
     this.removeFile = function(file) {
         file = file || this.currentFile;
         
+        // Remove the current file from its parent
         if (file) {
             file.parent.removeFile(file);
 
+            // If this was the main file, there is no main now.
             if (this.mainFile === file) {
                 this.mainFile = null;
             }
 
+            // Empty the file editor
             this.currentFile = null;
         }
         
@@ -56,9 +62,11 @@ var FileManager = new function() {
     this.removeFolder = function(folder) {
         folder = folder || this.currentFolder;
         
+        // Remove the folder from its parent
         if (folder && folder !== this.folder) {
             folder.parent.removeFolder(folder);
 
+            // open the parent folder
             this.currentFolder = folder.parent;
         }
         
@@ -72,6 +80,7 @@ var FileManager = new function() {
         this.rootFolder = null;
         this.folder = null;
         this.currentFolder = null;
+        this.mainFile = null;
     };
     
     /*
@@ -96,7 +105,7 @@ var FileManager = new function() {
     };
     
     /*
-     * Select the main file to be run]
+     * Select the main file to be run
      */
     this.setMainFile = function(file) {
         this.mainFile = file || this.currentFile;
@@ -209,32 +218,39 @@ var FileManager = new function() {
             } 
         }
         
-        // If a fileDisplay has been assigned, add buttons to select each of the
-        // files to the list
+        // If a fileDisplay has been assigned, add a tree of folders and files
+        // to the display
         this.fileDisplays.forEach(function(element){
             // Clear any contents of the parent element
             $(element).empty();
             
+            // Create a list to hold the tree view
             var list = document.createElement('ul');
             $(list).addClass('list-root');
             $(element).append(list);
 
+            // Add the root folder and its contents to the display
             FileManager.displayFolder(list, FileManager.folder);
         });
     };
     
-    this.displayFolder = function(element, folder) {          
+    /*
+     * Add the contents of a folder to a fileDisplay
+     */
+    this.displayFolder = function(element, folder) {
+        // add a list item for this folder
         var folderEl = document.createElement("li");
         $(folderEl).addClass('folder');
-        
         $(element).append(folderEl);
         
+        // Add a span to contain the folder's name and icon
         var container = document.createElement('span');
         $(folderEl).append(container);
         
+        // Add the folder icon
         var icon = document.createElement('span');
         $(icon).addClass('glyphicon');
-        
+        // If the folder is selected, show it as open, otherwise, show it as closed
         if (folder === FileManager.currentFolder) {
             $(icon).addClass('glyphicon-folder-open');
         }
@@ -244,59 +260,77 @@ var FileManager = new function() {
         
         $(container).append(icon);
         
+        // Space between the folder icon and name
         $(container).append('&nbsp;&nbsp;');
 
+        // Show the name of the folder
         var title = document.createElement("label");
         $(title).addClass('listfolder');
         $(title).text(folder.getName());
         $(container).append(title);
         
+        // Add a click handler to open the folder if its name/icon are clicked
         $(container).click(function() {
             FileManager.setCurrentFolder(folder);
             FileManager.setCurrentFile(null);
             FileManager.updateDisplay();
         });
 
+        // Add a list to contain the folder's contents
         var ul = document.createElement('ul');
         $(ul).addClass('nav')
              .addClass('nav-list')
              .addClass('tree');
         $(folderEl).append(ul);
 
+        // If this folder is open, add any files to the list of this folder's
+        //  contents
         if (FileManager.currentFolder === folder) {
             folder.files.forEach(function(file) {
                 FileManager.displayFile(ul, file);
             });
         }
+        // Add any subfolders to this folder's contents
         folder.folders.forEach(function(subfolder) {    
             FileManager.displayFolder(ul, subfolder);
         });
     };
     
+    // Add a file to a folder in the fileDisplay
     this.displayFile = function(element, file) {
+        // Add a list item for the file
         var item = document.createElement('li');
         $(element).append(item);
         
+        // Create a label to hold the filename
         var title = document.createElement('label');
+        
+        // Add an icon for the file
+        var icon = document.createElement('span');        
+        $(icon).addClass('glyphicon')
         
         // If this file is the main file, add a marker
         if (file === this.mainFile) {
-            var star = document.createElement('span');
-            $(star).addClass('glyphicon')
-                   .addClass('glyphicon-play-circle');
-
-            $(title).append(star);
-            $(title).append('&nbsp;');
+            $(icon).addClass('glyphicon-play-circle');
         }
+        // Otherwise add a file icon
+        else {
+            $(icon).addClass('glyphicon-file');
+        }        
+        $(title).append(icon);
+        $(title).append('&nbsp;');
         
+        // Add the filename
         $(title).append(file.name);
         $(title).addClass('listFile');
         
+        // If the file is open, highlight its name
         if (file === FileManager.currentFile) {
             $(title).addClass('active');
         }
-        
         $(item).append(title);
+        
+        // Add a click handler to open a file when its name or icon are clicked
         $(title).click(function() {
             $('.file-List').find('label').removeClass('active');
             FileManager.setCurrentFile(file);
@@ -310,18 +344,26 @@ var FileManager = new function() {
     /*
      * Download all of the files from a Gist, chosen by id
      */
-    this.loadFromGist = function(gist, main, errorhandler) {
-
+    this.loadFromGist = function(gist, main, errorhandler) { 
+        // Download the files from the gist asynchronously
+        $.ajax({
+            url: 'https://api.github.com/gists/' + gist,
+            type: 'get',
+            dataType: 'json',
+            cache: true,
+            success: handleGist,
+            async: true,
+            error: errorhandler
+        });
+        
+        /*
+         * When a gist is received
+         */
         function handleGist(data) {
+            // Get rid of any other files/folders
             FileManager.empty();
             
-            /*
-            // If a main file was specified, set it
-            if (main !== null) {
-                FileManager.setMainFile(main);
-            }
-            */
-           
+            // Create a new root folder
             FileManager.folder = new Folder("Files");
             FileManager.currentFolder = FileManager.folder;
             
@@ -344,6 +386,7 @@ var FileManager = new function() {
                     }
                 }
                 else {
+                    // if a main method was specified, select it
                     if (main === gistFile.name) {
                         FileManager.setMainFile(gistFile);
                         console.log('Main class set to ' + gistFile.name);
@@ -352,6 +395,7 @@ var FileManager = new function() {
                 }
             });
             
+            // Open the main method
             if (main !== null) {
                 FileManager.setCurrentFile(main);
             }
@@ -361,17 +405,6 @@ var FileManager = new function() {
             
             FileManager.updateDisplay();
         }
-                    
-        // Download the files from the gist asynchronously
-        $.ajax({
-            url: 'https://api.github.com/gists/' + gist,
-            type: 'get',
-            dataType: 'json',
-            cache: true,
-            success: handleGist,
-            async: true,
-            error: errorhandler
-        });
     };
 };
 
@@ -450,8 +483,9 @@ function Folder(name, parent) {
      */
     this.addFile = function(file) {
         file.parent = this;
-        
         this.files.push(file);
+        
+        // Sort the list of files
         this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
     };
            
@@ -460,8 +494,10 @@ function Folder(name, parent) {
      */
     this.addFolder = function(folder) {
         this.folders.push(folder);
-        this.folders.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
         folder.parent = this;
+        
+        // Sort the list of folders
+        this.folders.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
     };
     
     /*
@@ -497,7 +533,7 @@ function Folder(name, parent) {
     };
     
     /*
-     * Remove the current folder
+     * Remove the current file
      */
     this.removeFile = function(file) {
         var parent = file.parent;
