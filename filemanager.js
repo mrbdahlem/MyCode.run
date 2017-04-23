@@ -533,6 +533,20 @@ function Folder(name, parent) {
     };
     
     /*
+     * Retrieve a reference to a subfolder by name
+     */
+    this.findFolder = function(folderName) {
+        var found = null;
+        this.folders.forEach(function(folder){
+            if (folder.getName() === folderName) {
+                found = folder;
+                return;
+            }
+        });
+        return found;
+    };
+    
+    /*
      * Remove the current file
      */
     this.removeFile = function(file) {
