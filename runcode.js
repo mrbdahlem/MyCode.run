@@ -306,26 +306,28 @@ function addAllSourceFiles(folder, list) {
        addAllSourceFiles(subfolder, list); 
     });
     
-    // Add all of the files from this folder to the request
+    // Add all of the .java files from this folder to the request
     folder.files.forEach(function(file) {
-        // Determine the full path for the file being added
-        var path = "";
-        var parent = file.parent;
-        var root = FileManager.getRootFolder();
-        
-        while (parent !== root) {
-            path = parent.getName() + "/" + path;
-            parent = parent.getParent();
+        if (file.name.endsWith('.java')) {
+            // Determine the full path for the file being added
+            var path = "";
+            var parent = file.parent;
+            var root = FileManager.getRootFolder();
+
+            while (parent !== root) {
+                path = parent.getName() + "/" + path;
+                parent = parent.getParent();
+            }
+
+            path = path + file.name;
+
+            // Create and add a file object with the full pathname and contents
+            // separated into individual lines
+            var sourceFile = {};
+            sourceFile.name = path;
+            sourceFile.contents = file.contents.split(/\r?\n/);
+            list.push(sourceFile);
         }
-        
-        path = path + file.name;
-        
-        // Create and add a file object with the full pathname and contents
-        // separated into individual lines
-        var sourceFile = {};
-        sourceFile.name = path;
-        sourceFile.contents = file.contents.split(/\r?\n/);
-        list.push(sourceFile);
     });
 }
 
