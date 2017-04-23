@@ -118,6 +118,18 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="outputModalTitle">Modal title</h4>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Action
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Separated link</a>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-body" id="outputModalBody">
                     </div>
@@ -273,7 +285,7 @@ public class TestMain {\n\
              * add the new file to the file manager.
              */
             function newFile() {
-                var filename = getUserInput("New file name:");
+                var filename = getUserInput("New file name:\n(note: only files ending in .java are compiled)");
                 
                 if (filename !== null) {
                     var file = new SourceFile(filename);
@@ -285,7 +297,7 @@ public class TestMain {\n\
              * Rename the current file, prompting the user for the new name
              */
             function renameFile() {
-                var filename = getUserInput("New file name:", FileManager.getFile().name);
+                var filename = getUserInput("New file name:\n(note: only files ending in .java are compiled)", FileManager.getFile().name);
                 
                 if (filename !== null) {
                     FileManager.renameFile(filename);
