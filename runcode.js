@@ -179,8 +179,8 @@ function testCode() {
         apigClient.helloFunctionPost(params, body, additionalParams)
             // Show the result of the request
             .then(function(result) {
-                showTestCases(result, '#testOutputSelector', display, '#testCaseList');
                 showSucceeded(result, display, timer, start, "Tests");
+                showTestCases(result, '#testOutputSelector', display, '#testCaseList');
             }).catch(function(result){
                 showFailed(result, display, timer, start);
         });
@@ -219,6 +219,11 @@ function showSucceeded(result, display, timer, start, title) {
  * Show test cases on the output modal
  */
 function showTestCases(result, menu, display, caseList) {
+    var firstFailure = null;
+    var firstItem = null;
+    
+    var button = menu + ' > button';
+    
     if (result.data.testResults) {
         $(menu).show();
         $(caseList).empty();
@@ -227,32 +232,55 @@ function showTestCases(result, menu, display, caseList) {
         $(output).text('Test Output');
         $(output).click(function() {
             display.setValue(result.data.result, 1);
-            $(menu + ' > button').text($(this).text());
+            $(button).text($(this).text());
+            $(button).addClass('btn-primary');
+            $(button).removeClass('btn-danger');
         });
         $(caseList).append($(output));
-        $(menu + ' > button').text('Test Output');
+        $(button).text('Test Output');
         
         var caret = document.createElement('span');
         $(caret).addClass('caret');
-        $(menu + ' > button').append(caret);
+        $(button).append(caret);
+        firstItem = output;
         
         result.data.testResults.details.forEach(function(detail, num) {
            var item = document.createElement('a');
            $(item).addClass('dropdown-item');
            $(item).addClass((detail.passed) ? 'passed' : 'failed');
            
+           if (!detail.passed && firstFailure === null) {
+               firstFailure = item;
+           }
+           
            $(item).text("Test " + (num + 1) + ": " + detail.description);
 
-           $(item).click(function() {
+           $(item).click(function() {               
                 display.setValue(detail.body, 1);
-                $(menu + ' > button').text($(this).text());
+                $(button).text($(this).text());
 
                 var caret = document.createElement('span');
                 $(caret).addClass('caret');
-                $(menu + ' > button').append(caret);        
+                $(button).append(caret);
+                
+                if (detail.passed) {
+                    $(button).addClass('btn-primary');
+                    $(button).removeClass('btn-danger');
+                }
+                else {
+                    $(button).removeClass('btn-primary');
+                    $(button).addClass('btn-danger');
+                }
            });
            $(caseList).append($(item));
         });
+        
+        if (firstFailure) {
+            $(firstFailure).click();
+        }
+        else {
+            $(firstItem).click();
+        }
     }
 }
 

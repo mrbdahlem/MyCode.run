@@ -194,12 +194,12 @@ a.dropdown-item:hover {
 }
 
 a.dropdown-item.failed {
-    color: #f00;
+    color: #c12e2a;
 }
 
 a.dropdown-item.failed:hover {
     text-decoration: none;
-    background-color: #f00;
+    background-color: #c12e2a;
     color: #fff;
 }
 
