@@ -118,16 +118,11 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="outputModalTitle">Modal title</h4>
-                        <div class="btn-group">
+                        <div id="testOutputSelector" class="dropdown">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Action
+                                Test Output<span class="caret"></span>
                             </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Separated link</a>
+                            <div id="testCaseList" class="dropdown-menu">
                             </div>
                         </div>
                     </div>
@@ -265,7 +260,7 @@ public class TestMain {\n\
         System.setOut(old);\n\
         String output = baos.toString();\n\
         System.out.println(output);\n\
-        assertEquals(\"\\\"Hello World\\\" should be Hello World\\n\", \"Hello World\\n\", output);\n\
+        assertEquals(\"\\\"Hello World\\\" should be \\\"Hello World\\\\n\\\"\\n\", \"Hello World\\n\", output);\n\
     }\n\
 }";
                     var testFolder = new Folder("Test");

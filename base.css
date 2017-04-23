@@ -177,3 +177,44 @@ container {
 .active {
     background-color: #337ab7;
 }
+
+a.dropdown-item {
+    display: block;
+    padding-left: 15px;
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+}
+
+a.dropdown-item:hover {
+    text-decoration: none;
+    background-color: #337ab7;
+    color: #fff;
+}
+
+a.dropdown-item.failed {
+    color: #f00;
+}
+
+a.dropdown-item.failed:hover {
+    text-decoration: none;
+    background-color: #f00;
+    color: #fff;
+}
+
+a.dropdown-item.failed::before {
+  font-family: "Glyphicons Halflings";
+  content: "\e014";
+  margin-right: 5px;
+}
+
+a.dropdown-item.passed::before {
+  font-family: "Glyphicons Halflings";
+  content: "\e013";
+  margin-right: 5px;
+}
+
+.btn .caret {
+    margin-left: 10px;
+}

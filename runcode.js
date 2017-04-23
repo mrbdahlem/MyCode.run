@@ -14,6 +14,7 @@ function runCode() {
     $('#outputModalTitle').text('Running...');
     $('#outputModalBody').html('<pre id="output">Please wait...</pre>'); 
     $('#exTime').html('Execution time: ___ ms');
+    $('#testOutputSelector').hide();
     $('#outputModal').modal('show');
     
     // Prepare the output display as a read-only editor
@@ -79,7 +80,7 @@ function runCode() {
     apigClient.helloFunctionPost(params, body, additionalParams)
         // Show the result of the request
         .then(function(result) {
-            showSucceeded(result, display, timer, start);
+            showSucceeded(result, display, timer, start, "Execution");
         }).catch(function(result){
             showFailed(result, display, timer, start);
     });
@@ -96,10 +97,12 @@ function testCode() {
         apiKey: HELLO_API_KEY
     });
     
+    
     // Set up a bootstrap modal to display the output of the run
     $('#outputModalTitle').text('Running...');
     $('#outputModalBody').html('<pre id="output">Please wait...</pre>'); 
     $('#exTime').html('Execution time: ___ ms');
+    $('#testOutputSelector').hide();
     $('#outputModal').modal('show');
     
     // Prepare the output display as a read-only editor
@@ -171,17 +174,14 @@ function testCode() {
         $('#outputModal').on('hide.bs.modal', function(e) {
             clearInterval(timer);
         });
-
-        console.log(body);
         
         // Make the compile-run request
         apigClient.helloFunctionPost(params, body, additionalParams)
             // Show the result of the request
             .then(function(result) {
-                console.log(result);
-                showSucceeded(result, display, timer, start);
+                showTestCases(result, '#testOutputSelector', display, '#testCaseList');
+                showSucceeded(result, display, timer, start, "Tests");
             }).catch(function(result){
-                console.log(result);
                 showFailed(result, display, timer, start);
         });
     }
@@ -197,7 +197,7 @@ function testCode() {
 /*
  * Show a successful execution
  */
-function showSucceeded(result, display, timer, start) {
+function showSucceeded(result, display, timer, start, title) {
     // If the request returns properly...
     // calculate and display the execution time
     clearInterval(timer);
@@ -209,10 +209,51 @@ function showSucceeded(result, display, timer, start) {
 
     // Display whether the compile-run succeeded
     var success = (result.data.succeeded) ? 'Succeeded' : 'Failed';
-    $('#outputModalTitle').text('Execution ' + success);
+    $('#outputModalTitle').text(title + " " + success);
 
     // Show the response
     display.setValue(returntext, 1);
+}
+
+/*
+ * Show test cases on the output modal
+ */
+function showTestCases(result, menu, display, caseList) {
+    if (result.data.testResults) {
+        $(menu).show();
+        $(caseList).empty();
+        var output = document.createElement('a');
+        $(output).addClass('dropdown-item');
+        $(output).text('Test Output');
+        $(output).click(function() {
+            display.setValue(result.data.result, 1);
+            $(menu + ' > button').text($(this).text());
+        });
+        $(caseList).append($(output));
+        $(menu + ' > button').text('Test Output');
+        
+        var caret = document.createElement('span');
+        $(caret).addClass('caret');
+        $(menu + ' > button').append(caret);
+        
+        result.data.testResults.details.forEach(function(detail, num) {
+           var item = document.createElement('a');
+           $(item).addClass('dropdown-item');
+           $(item).addClass((detail.passed) ? 'passed' : 'failed');
+           
+           $(item).text("Test " + (num + 1) + ": " + detail.description);
+
+           $(item).click(function() {
+                display.setValue(detail.body, 1);
+                $(menu + ' > button').text($(this).text());
+
+                var caret = document.createElement('span');
+                $(caret).addClass('caret');
+                $(menu + ' > button').append(caret);        
+           });
+           $(caseList).append($(item));
+        });
+    }
 }
 
 /*
