@@ -227,7 +227,42 @@
         System.out.println(\"Hello World\");\n\
     }\n\
 }";
-                // Add the sample file to the filemanager
+                if (params.has('test')) {
+                    var testFile = new SourceFile();
+                    testFile.name = "TestMain.java";
+                    testFile.contents = 
+"import java.io.ByteArrayOutputStream;\n\
+import java.io.PrintStream;\n\
+import static org.junit.Assert.*;\n\
+import org.junit.Test;\n\
+\n\
+public class TestMain {\n\
+    @Test\n\
+    public void testMain() {\n\
+        // Redirect Standard output\n\
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n\
+        PrintStream ps = new PrintStream(baos);\n\
+        PrintStream old = System.out;\n\
+        System.setOut(ps);\n\
+        \n\
+        Main.main(new String[0]);\n\
+        \n\
+        // Clear the output and restore the original\n\
+        System.out.flush();\n\
+        \n\
+        System.setOut(old);\n\
+        String output = baos.toString();\n\
+        System.out.println(output);\n\
+        assertEquals(\"\\\"Hello World\\\" should be Hello World\\n\", \"Hello World\\n\", output);\n\
+    }\n\
+}";
+                    var testFolder = new Folder("Test");
+                    testFolder.addFile(testFile);
+                    FileManager.addFolder(testFolder);
+                    FileManager.setCurrentFolder(FileManager.getRootFolder());
+                }
+                
+                // Add the sample file(s) to the filemanager
                 FileManager.setCurrentFile(mainFile);
                 FileManager.addFile(mainFile);
                 FileManager.setMainFile(mainFile);

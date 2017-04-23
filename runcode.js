@@ -161,33 +161,37 @@ function testCode() {
     
     var additionalParams = {};
     
-        if (body.test.testClasses.length > 0) {
-            // Add the derived classname to the compiling message
-            $('#outputModalTitle').text('Compiling and testing ' + mainName + '...');
+    if (body.test.testClasses.length > 0) {
+        // Add the derived classname to the compiling message
+        $('#outputModalTitle').text('Compiling and testing ' + mainName + '...');
 
-            // Record the current time to calculate how long the request takes
-            var start = new Date().getTime();
-            var timer = displayElapsedTime($('#exTime'), start);
-            $('#outputModal').on('hide.bs.modal', function(e) {
-                clearInterval(timer);
-            });
+        // Record the current time to calculate how long the request takes
+        var start = new Date().getTime();
+        var timer = displayElapsedTime($('#exTime'), start);
+        $('#outputModal').on('hide.bs.modal', function(e) {
+            clearInterval(timer);
+        });
 
-            // Make the compile-run request
-            apigClient.helloFunctionPost(params, body, additionalParams)
-                // Show the result of the request
-                .then(function(result) {
-                    showSucceeded(result, display, timer, start);
-                }).catch(function(result){
-                    showFailed(result, display, timer, start);
-            });
-        }
-        else {
-            // Add the derived classname to the compiling message
-            $('#outputModalTitle').text('No test cases for ' + mainName + '.');
-            
-            $('#outputModalBody').html('<p>Couldn\'t run tests that don\'t exist.</p>');
-            $('#exTime').text('--');
-        }
+        console.log(body);
+        
+        // Make the compile-run request
+        apigClient.helloFunctionPost(params, body, additionalParams)
+            // Show the result of the request
+            .then(function(result) {
+                console.log(result);
+                showSucceeded(result, display, timer, start);
+            }).catch(function(result){
+                console.log(result);
+                showFailed(result, display, timer, start);
+        });
+    }
+    else {
+        // Add the derived classname to the compiling message
+        $('#outputModalTitle').text('No test cases for ' + mainName + '.');
+
+        $('#outputModalBody').html('<p>Couldn\'t run tests that don\'t exist.</p>');
+        $('#exTime').text('--');
+    }
 }
 
 /*
