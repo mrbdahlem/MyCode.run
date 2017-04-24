@@ -118,6 +118,7 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="outputModalTitle">Modal title</h4>
+                        <!-- Dropdown to select test-case output when code is "tested" -->
                         <div id="testOutputSelector" class="dropdown">
                             <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Test Output<span class="caret"></span>
@@ -225,7 +226,7 @@
                         });
             }
             else {
-                // otherwise, create a sample file
+                // otherwise, create a sample project
                 var mainFile = new SourceFile();
                 mainFile.name = "Main.java";
                 mainFile.contents = 

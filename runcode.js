@@ -188,7 +188,6 @@ function testCode() {
     else {
         // Add the derived classname to the compiling message
         $('#outputModalTitle').text('No test cases for ' + mainName + '.');
-
         $('#outputModalBody').html('<p>Couldn\'t run tests that don\'t exist.</p>');
         $('#exTime').text('--');
     }
@@ -219,57 +218,76 @@ function showSucceeded(result, display, timer, start, title) {
  * Show test cases on the output modal
  */
 function showTestCases(result, menu, display, caseList) {
-    var firstFailure = null;
+    var firstFailure = false;
     var firstItem = null;
     
     var button = menu + ' > button';
     
+    // If the result packet included test data
     if (result.data.testResults) {
-        console.log(result.data);
+        // Add a summary to the test output
         result.data.result = "Results:  " +
                 result.data.testResults.numPassed + " of " +
                 result.data.testResults.numTests + " test(s) passed.  " +
                 (result.data.testResults.score * 100).toFixed(2) + "%\n" +
                 "-----\n"+
                 result.data.result;
+        
+        // Show the test case drop-down
         $(menu).show();
         $(caseList).empty();
+        
+        // Add a Test Output option to the drop-down
         var output = document.createElement('a');
         $(output).addClass('dropdown-item');
         $(output).text('Test Output');
+        $(caseList).append($(output));
         $(output).click(function() {
+            // When this button is clicked, show the output
             display.setValue(result.data.result, 1);
+            // and update the drop-down button
             $(button).text($(this).text());
             $(button).addClass('btn-primary');
             $(button).removeClass('btn-danger');
         });
-        $(caseList).append($(output));
+
+        // Test output is the default, so show it.
+        firstItem = output;
         $(button).text('Test Output');
-        
+        // And add a caret to show that a dropdown will appear
         var caret = document.createElement('span');
         $(caret).addClass('caret');
         $(button).append(caret);
-        firstItem = output;
         
+        // Loop through all of the test cases
         result.data.testResults.details.forEach(function(detail, num) {
-           var item = document.createElement('a');
-           $(item).addClass('dropdown-item');
-           $(item).addClass((detail.passed) ? 'passed' : 'failed');
+            // Add an item to the drop-down for each test case
+            var item = document.createElement('a');
+            $(item).text("Test " + (num + 1) + ": " + detail.description);
+            $(item).addClass('dropdown-item');
+            // Add a class for whether this test case passed or failed
+            $(item).addClass((detail.passed) ? 'passed' : 'failed');
            
-           if (!detail.passed && firstFailure === null) {
-               firstFailure = item;
-           }
-           
-           $(item).text("Test " + (num + 1) + ": " + detail.description);
-
-           $(item).click(function() {               
+            // If this is the first failed test case, select it
+            if (!detail.passed && firstFailure === false) {
+                firstFailure = true;
+                firstItem = item;
+            }
+            
+            // When this item is clicked
+            $(item).click(function() {  
+                // Show the results of this test case
                 display.setValue(detail.body, 1);
+                
+                // Update the drop-down to show which case is displayed
                 $(button).text($(this).text());
-
+                
+                // Add a caret to maintain the drop-down appearance
                 var caret = document.createElement('span');
                 $(caret).addClass('caret');
                 $(button).append(caret);
                 
+                // Color the button depending on whether the case passed/failed
                 if (detail.passed) {
                     $(button).addClass('btn-primary');
                     $(button).removeClass('btn-danger');
@@ -282,12 +300,8 @@ function showTestCases(result, menu, display, caseList) {
            $(caseList).append($(item));
         });
         
-        if (firstFailure) {
-            $(firstFailure).click();
-        }
-        else {
-            $(firstItem).click();
-        }
+        // Show either the first failure or the first item
+        $(firstItem).click();
     }
 }
 
@@ -370,5 +384,5 @@ function displayElapsedTime (el, start) {
     return setInterval(function() {
             var timeDiff = Math.round(((new Date().getTime()) - start) / 100) * 100;
             el.html('Execution time: ' + (timeDiff) + 'ms');
-        }, 100);
+    }, 100);
 }
