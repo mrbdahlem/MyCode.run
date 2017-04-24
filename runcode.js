@@ -31,6 +31,7 @@ function runCode() {
                         fontSize: "12pt",
                         wrap: true
                     });
+    display.setValue("Please wait...",1);
     
     // Get the main class's actual name..
     // drop the .java extension
@@ -119,6 +120,7 @@ function testCode() {
                         fontSize: "12pt",
                         wrap: true
                     });
+    display.setValue("Please wait...",1);
     
     // Get the main class's actual name..
     // drop the .java extension
