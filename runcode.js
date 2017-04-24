@@ -188,7 +188,7 @@ function testCode() {
     else {
         // Add the derived classname to the compiling message
         $('#outputModalTitle').text('No test cases for ' + mainName + '.');
-        display.setValue('Couldn\'t run tests that don\'t exist.');
+        display.setValue('Can\'t run tests that don\'t exist.', 1);
         $('#exTime').text('--');
     }
 }
