@@ -12,7 +12,7 @@ function runCode() {
     
     // Set up a bootstrap modal to display the output of the run
     $('#outputModalTitle').text('Running...');
-    $('#outputModalBody').html('<pre id="output">Please wait...</pre>'); 
+    $('#output').show();
     $('#exTime').html('Execution time: ___ ms');
     $('#testOutputSelector').hide();
     $('#outputModal').modal('show');
@@ -100,7 +100,7 @@ function testCode() {
     
     // Set up a bootstrap modal to display the output of the run
     $('#outputModalTitle').text('Running...');
-    $('#outputModalBody').html('<pre id="output">Please wait...</pre>'); 
+    $('#output').show(); 
     $('#exTime').html('Execution time: ___ ms');
     $('#testOutputSelector').hide();
     $('#outputModal').modal('show');
@@ -188,7 +188,7 @@ function testCode() {
     else {
         // Add the derived classname to the compiling message
         $('#outputModalTitle').text('No test cases for ' + mainName + '.');
-        $('#outputModalBody').html('<p>Couldn\'t run tests that don\'t exist.</p>');
+        display.setValue('Couldn\'t run tests that don\'t exist.');
         $('#exTime').text('--');
     }
 }
@@ -249,15 +249,16 @@ function showTestCases(result, menu, display, caseList) {
             $(button).text($(this).text());
             $(button).addClass('btn-primary');
             $(button).removeClass('btn-danger');
+            
+            // And add a caret to show that a dropdown will appear
+            var caret = document.createElement('span');
+            $(caret).addClass('caret');
+            $(button).append(caret);
         });
 
-        // Test output is the default, so show it.
+        // Test output is the default display
         firstItem = output;
-        $(button).text('Test Output');
-        // And add a caret to show that a dropdown will appear
-        var caret = document.createElement('span');
-        $(caret).addClass('caret');
-        $(button).append(caret);
+        
         
         // Loop through all of the test cases
         result.data.testResults.details.forEach(function(detail, num) {
@@ -317,7 +318,8 @@ function showFailed(result, display, timer, start) {
 
     // Display the response
     $('#outputModalTitle').text('Execution Failed');
-    $('#outputModalBody').html('<p>Failure communicating with server</p>');
+    display.setValue('Failure communicating with server', 1);
+    console.log(result);
 }
 
 // Add all source files to the request file list
