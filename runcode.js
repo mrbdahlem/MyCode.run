@@ -225,6 +225,13 @@ function showTestCases(result, menu, display, caseList) {
     var button = menu + ' > button';
     
     if (result.data.testResults) {
+        console.log(result.data);
+        result.data.result = "Results:  " +
+                result.data.testResults.numPassed + " of " +
+                result.data.testResults.numTests + " test(s) passed.  " +
+                (result.data.testResults.score * 100).toFixed(2) + "%\n" +
+                "-----\n"+
+                result.data.result;
         $(menu).show();
         $(caseList).empty();
         var output = document.createElement('a');
