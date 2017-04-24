@@ -1,5 +1,7 @@
 /* global FileManager, Infinity, ace, HELLO_API_KEY, apigClientFactory, FileManger */
 
+var display = null;
+
 /*
  * Run the code contained in the file manager, by compiling everything and
  * executing the main class, then display the result.
@@ -9,8 +11,14 @@ function runCode() {
     var apigClient = apigClientFactory.newClient({
         apiKey: HELLO_API_KEY
     });
-    
+   
+    if (display)
+        display.destroy();
+    display = null;
     // Set up a bootstrap modal to display the output of the run
+    $('#outputContainer').empty();
+    $('#outputContainer').html("<pre id=\"output\">Please wait...</pre>");
+   
     $('#outputModalTitle').text('Running...');
     $('#output').show();
     $('#exTime').html('Execution time: ___ ms');
@@ -18,20 +26,7 @@ function runCode() {
     $('#outputModal').modal('show');
     
     // Prepare the output display as a read-only editor
-    var display = ace.edit("output");
-    display.setTheme("ace/theme/terminal");
-    display.$blockScrolling = Infinity;
-    display.setOptions({
-                        maxLines: 25,
-                        minLines: 1,
-                        readOnly: true,
-                        highlightActiveLine: false,
-                        highlightGutterLine: false,
-                        fontFamily: "Inconsolata",
-                        fontSize: "12pt",
-                        wrap: true
-                    });
-    display.setValue("Please wait...",1);
+    setupDisplay('output');
     
     // Get the main class's actual name..
     // drop the .java extension
@@ -99,7 +94,13 @@ function testCode() {
     });
     
     
+    if (display)
+        display.destroy();
+    display = null;
     // Set up a bootstrap modal to display the output of the run
+    $('#outputContainer').empty();
+    $('#outputContainer').html("<pre id=\"output\">Please wait...</pre>");
+    
     $('#outputModalTitle').text('Running...');
     $('#output').show(); 
     $('#exTime').html('Execution time: ___ ms');
@@ -107,20 +108,7 @@ function testCode() {
     $('#outputModal').modal('show');
     
     // Prepare the output display as a read-only editor
-    var display = ace.edit("output");
-    display.setTheme("ace/theme/terminal");
-    display.$blockScrolling = Infinity;
-    display.setOptions({
-                        maxLines: 25,
-                        minLines: 1,
-                        readOnly: true,
-                        highlightActiveLine: false,
-                        highlightGutterLine: false,
-                        fontFamily: "Inconsolata",
-                        fontSize: "12pt",
-                        wrap: true
-                    });
-    display.setValue("Please wait...",1);
+    setupDisplay('output');
     
     // Get the main class's actual name..
     // drop the .java extension
@@ -195,6 +183,27 @@ function testCode() {
     }
 }
 
+function setupDisplay(element) {
+    
+    if (display === null) {
+        display = ace.edit(element);
+        display.setTheme("ace/theme/terminal");
+        display.$blockScrolling = Infinity;
+        display.setOptions({
+                            maxLines: 25,
+                            minLines: 1,
+                            readOnly: true,
+                            highlightActiveLine: false,
+                            highlightGutterLine: false,
+                            fontFamily: "Inconsolata",
+                            fontSize: "12pt",
+                            wrap: true
+                        });
+    }
+    display.resize(true);
+    
+    return display;
+}
 /*
  * Show a successful execution
  */
