@@ -51,11 +51,19 @@ function runCode() {
             mainClass: mainName,
             sourceFiles: []
         },
+        data: {
+            version: 1,
+            dataFiles: []
+        },
         "test-type": "run"
     };
     
+    var root = FileManager.getRootFolder();
     // Add the files in the global file manager to the request body.
-    addAllSourceFiles(FileManager.getRootFolder(), body.compile.sourceFiles);
+    addAllSourceFiles(root, body.compile.sourceFiles);
+    
+    // Add data files to the request
+    addAllDataFiles(root, body.data.dataFiles);
     
     // Add parameters for the request
     var params = {
@@ -134,6 +142,10 @@ function testCode() {
             version: 1,
             testClasses: []
         },
+        data: {
+            version: 1,
+            dataFiles: []
+        },
         "test-type": "junit"
     };
     
@@ -145,7 +157,10 @@ function testCode() {
     // Add the names of the test cases to the testClasses list
     addAllTestClasses(root.findFolder("Test"),
                       body.test.testClasses);
-    
+                      
+    // Add data files to the request
+    addAllDataFiles(root, body.data.dataFiles);
+
     // Add parameters for the request
     var params = {
         "Content-Type": "application/json",
@@ -388,6 +403,37 @@ function addAllTestClasses(folder, list) {
             list.push(className);
         });
     }
+}
+
+function addAllDataFiles(folder, list) {
+     // Add all of the files from the this folder's subfolders to the request
+    folder.folders.forEach(function(subfolder) {
+       addAllDataFiles(subfolder, list); 
+    });
+    
+    // Add all of the files that aren't .java files from this folder to the request
+    folder.files.forEach(function(file) {
+        if (!(file.name.endsWith('.java'))) {
+            // Determine the full path for the file being added
+            var path = "";
+            var parent = file.parent;
+            var root = FileManager.getRootFolder();
+
+            while (parent !== root) {
+                path = parent.getName() + "/" + path;
+                parent = parent.getParent();
+            }
+
+            path = path + file.name;
+
+            // Create and add a file object with the full pathname and contents
+            // separated into individual lines
+            var dataFile = {};
+            dataFile.name = path;
+            dataFile.contents = file.contents.split(/\r?\n/);
+            list.push(dataFile);
+        }
+    });
 }
 
 /*
