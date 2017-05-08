@@ -263,10 +263,10 @@ function showTestCases(result, menu, display, caseList) {
         $(menu).show();
         $(caseList).empty();
         
-        // Add a Test Output option to the drop-down
+        // Add a Test Symmary option to the drop-down
         var output = document.createElement('a');
         $(output).addClass('dropdown-item');
-        $(output).text('Test Output');
+        $(output).text('Test Summary');
         $(caseList).append($(output));
         $(output).click(function() {
             // When this button is clicked, show the output
