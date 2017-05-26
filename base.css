@@ -61,6 +61,17 @@ container {
 
 .navbar-brand {
     font-family: Inconsolata;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+.navbar-brand:hover {
+    color: #9d9d9d!important;
+}
+
+.navbar-right {
+    margin-right: 15px;
 }
 
 .row.no-pad {
@@ -91,6 +102,10 @@ container {
     
     .appname {
         display: none;
+    }
+    
+    .navbar-brand {
+        text-align: left;
     }
 }
 
