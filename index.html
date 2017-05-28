@@ -432,18 +432,19 @@ public class TestMain {\n\
             
             gitHub.listRepos = function(done, error) {
                 var addAllRepos = function(target, json, done, error) {
-                    json.forEach(function(repo) {
+                    var data = json.data;
+                    data.forEach(function(repo) {
                         var repo = {};
-                        repo.id = json.id;
-                        repo.owner = json.owner.login;
-                        repo.name = json.name;
-                        repo.full_name = json.full_name;
-                        repo.description = json.description;
-                        repo.url = json.url;
-                        repo.branches_url = json.branches_url;
-                        repo.git_commits_url = json.git_commits_url;
-                        repo.default_branch = json.default_branch;
-                        repo.permissions = json.permissions;
+                        repo.id = data.id;
+                        repo.owner = data.owner.login;
+                        repo.name = data.name;
+                        repo.full_name = data.full_name;
+                        repo.description = data.description;
+                        repo.url = data.url;
+                        repo.branches_url = data.branches_url;
+                        repo.git_commits_url = data.git_commits_url;
+                        repo.default_branch = data.default_branch;
+                        repo.permissions = data.permissions;
                         target.push(repo);
                     });
                     
