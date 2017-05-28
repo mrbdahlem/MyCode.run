@@ -432,6 +432,8 @@ public class TestMain {\n\
             
             gitHub.listRepos = function(done, error) {
                 var addAllRepos = function(target, json, done, error) {
+                    console.log("Starting");
+                    
                     json.data.forEach(function(data) {
                         var repo = {};
                         repo.id = data.id;
