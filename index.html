@@ -75,7 +75,8 @@
                                 <li><a onclick="renameFolder();">Rename the current folder...</a></li>
                                 <li><a onclick="removeFolder();">Remove the current folder...</a></li>
                                 <li class="divider"></li>
-                                <li><a onclick="loadGist();">Load Gist...</a></li>
+                                <li><a onclick="loadGist();">Load GitHub Gist...</a></li>
+                                <li><a onclick="loadRepo();">Load GitHub Repository...</a></li>
                             </ul>
                         <!-- File Menu... gets populated by FileManager and only shown on small screens-->
                         <li class="dropdown filemenulist">
@@ -242,7 +243,9 @@
         System.out.println(\"Hello World\");\n\
     }\n\
 }";
+                // If the test option was specified
                 if (params.has('test')) {
+                    // Add a JUnit test file
                     var testFile = new SourceFile();
                     testFile.name = "TestMain.java";
                     testFile.contents = 
@@ -271,6 +274,7 @@ public class TestMain {\n\
         assertEquals(\"\\\"Hello World\\\" should be \\\"Hello World\\\\n\\\"\\n\", \"Hello World\\n\", output);\n\
     }\n\
 }";
+                    // and place it in a "Test" folder
                     var testFolder = new Folder("Test");
                     testFolder.addFile(testFile);
                     FileManager.addFolder(testFolder);
@@ -375,6 +379,110 @@ public class TestMain {\n\
                     
                     History.pushState(null, document.title, `${location.pathname}?${params}`);
                 }   
+            };
+            
+            /*
+             * Prompt the user for a GithHub repo and load the files from that repo 
+             */
+            function loadRepo() {
+                gitHub.ensureLogin(function() {
+                    gitHub.listRepos(function(repos){
+                        console.log(repos);
+                    }, 
+                    function(e) {
+                        alert('GitHub communication error: ' + e.error.message);
+                    });
+                },
+                function(e) {
+                    alert('GitHub login error: ' + e.error.message);
+                });               
+            }
+            
+            function selectRepo() {
+                
+            };
+            
+            var gitHub = {};
+            
+            /*
+             * Make sure that github is logged in before calling callback
+             * if there is an error, call errorCallback with an error param
+             */
+            gitHub.ensureLogin = function(callback, errorCallback) {
+//                var session = hello('github').getAuthResponse();
+//                var currentTime = (new Date()).getTime() / 1000;
+//         	var online = session && session.access_token && session.expires > currentTime;
+            
+//                if(online) {
+//                    callback();
+//                }
+//                else {
+                    var options = {};
+                    options.scope = ['user', 'repo', 'gist'];
+                    options.force = false;
+                    
+                    hello('github', options).login().then(function() {
+                        callback()
+                    }, 
+                    function(e) {
+                        errorCallback(e);
+                    });
+//                }    
+            }
+            
+            gitHub.listRepos = function(done, error) {
+                var addAllRepos = function(target, json, done, error) {
+                    json.forEach(function(repo) {
+                        var repo = {};
+                        repo.id = json.id;
+                        repo.owner = json.owner.login;
+                        repo.name = json.name;
+                        repo.full_name = json.full_name;
+                        repo.description = json.description;
+                        repo.url = json.url;
+                        repo.branches_url = json.branches_url;
+                        repo.git_commits_url = json.git_commits_url;
+                        repo.default_branch = json.default_branch;
+                        repo.permissions = json.permissions;
+                        target.push(repo);
+                    });
+                    
+                    if (json.paging && json.paging.next) {
+                        hello('github').api(this.paging.next).then(
+                            function(response){
+                                addAllRepos(target, response, done, error);
+                            },
+                            function(e) {
+                                error(e);
+                            });
+                    }
+                    else {
+                        done();
+                    }
+                }
+                
+                this.repos = "";
+                hello('github').api(this.repos_url).then(
+                    function(response){
+                        addAllRepos(this.repos, response, done, error);
+                    },
+                    function (e) {
+                        error(e);
+                    }
+                )
+            }
+            
+            /*
+             * Callback for auth session starts
+             */
+            function sessionStart() {
+                hello('github').api('/me').then(function(json) {
+                    gitHub.username = json.login;
+                    gitHub.repos_url = json.repos_url;
+                },
+                function(e) {
+                    
+                });
             }
         </script>
         
@@ -388,6 +496,7 @@ public class TestMain {\n\
             hello.init({github: 'b80ec7eaa799156bba33'},
                        {redirect_uri: 'redirect.html',
                         oauth_proxy: 'https://auth-server.herokuapp.com/proxy'});
+            hello.on('auth.login', sessionStart);
         </script>
         
     </body>
