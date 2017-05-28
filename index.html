@@ -414,17 +414,21 @@ public class TestMain {\n\
          	var online = session && session.access_token && session.expires > currentTime;
             
                 if(online) {
+                    console.log("here");
                     callback();
                 }
                 else {
+                    console.log("there");
                     var options = {};
                     options.scope = ['user', 'repo', 'gist'];
                     options.force = false;
                     
                     hello('github', options).login().then(function() {
+                        console.log("yes");
                         callback()
                     }, 
                     function(e) {
+                        console.log("no");
                         errorCallback(e);
                     });
                 }    
