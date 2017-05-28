@@ -454,7 +454,7 @@ public class TestMain {\n\
                     console.log("here");
                     
                     if (json.paging && json.paging.next) {
-                        hello('github').api(this.paging.next).then(
+                        hello('github').api(json.paging.next).then(
                             function(response){
                                 console.log("more");
                                 addAllRepos(target, response, done, error);
@@ -469,10 +469,10 @@ public class TestMain {\n\
                     }
                 }
                 
-                this.repos = [];
-                hello('github').api(this.repos_url).then(
+                gitHub.repos = [];
+                hello('github').api(gitHub.repos_url).then(
                     function(response){
-                        addAllRepos(this.repos, response, done, error);
+                        addAllRepos(gitHub.repos, response, done, error);
                     },
                     function (e) {
                         error(e);
