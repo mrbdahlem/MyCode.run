@@ -409,14 +409,14 @@ public class TestMain {\n\
              * if there is an error, call errorCallback with an error param
              */
             gitHub.ensureLogin = function(callback, errorCallback) {
-//                var session = hello('github').getAuthResponse();
-//                var currentTime = (new Date()).getTime() / 1000;
-//         	var online = session && session.access_token && session.expires > currentTime;
+                var session = hello('github').getAuthResponse();
+                var currentTime = (new Date()).getTime() / 1000;
+         	var online = session && session.access_token && session.expires > currentTime;
             
-//                if(online) {
-//                    callback();
-//                }
-//                else {
+                if(online) {
+                    callback();
+                }
+                else {
                     var options = {};
                     options.scope = ['user', 'repo', 'gist'];
                     options.force = false;
@@ -427,7 +427,7 @@ public class TestMain {\n\
                     function(e) {
                         errorCallback(e);
                     });
-//                }    
+                }    
             }
             
             gitHub.listRepos = function(done, error) {
