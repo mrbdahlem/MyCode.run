@@ -381,5 +381,14 @@ public class TestMain {\n\
         <script src="HelloAPIkey.js" type="text/javascript"></script>
         <!-- the program runner API -->
         <script src="runcode.js" type="text/javascript"></script>
+        
+        <!-- Hello.js OAUTH library (no relation to HelloAPI) -->
+        <script src="./lib/hello.all.min.js"></script>
+        <script>
+            hello.init({github: 'b80ec7eaa799156bba33'},
+                       {redirect_uri: 'redirect.html',
+                        oauth_proxy: 'https://auth-server.herokuapp.com/proxy'});
+        </script>
+        
     </body>
 </html>
