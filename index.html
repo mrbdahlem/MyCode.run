@@ -470,7 +470,7 @@ public class TestMain {\n\
                 }
                 
                 gitHub.repos = [];
-                hello('github').api(gitHub.repos_url).then(
+                hello('github').api(gitHub.repos_url, 'get', {"per_page": 1).then(
                     function(response){
                         addAllRepos(gitHub.repos, response, done, error);
                     },
