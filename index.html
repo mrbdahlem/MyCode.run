@@ -432,8 +432,7 @@ public class TestMain {\n\
             
             gitHub.listRepos = function(done, error) {
                 var addAllRepos = function(target, json, done, error) {
-                    var data = json.data;
-                    data.forEach(function(repo) {
+                    json.data.forEach(function(data) {
                         var repo = {};
                         repo.id = data.id;
                         repo.owner = data.owner.login;
