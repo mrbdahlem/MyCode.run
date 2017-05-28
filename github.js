@@ -26,7 +26,7 @@ gitHub.ensureLogin = function(callback, errorCallback) {
     }    
 }
 
-gitHub.listRepos = function(done, error) {
+gitHub.getRepos = function(done, error) {
     var addAllRepos = function(target, json, done, error) {
         json.data.forEach(function(data) {
             var repo = {};
@@ -61,7 +61,7 @@ gitHub.listRepos = function(done, error) {
     gitHub.repos = [];
 
     gitHub.ensureLogin (function () {
-        hello('github').api(gitHub.repos_url).then(
+        hello('github').api('/user/repos').then(
             function(response){
                 addAllRepos(gitHub.repos, response, done, error);
             },
@@ -92,7 +92,7 @@ function sessionStart() {
  * Prepare for oauth login to github
  */
 hello.init({github: 'b80ec7eaa799156bba33'},
-           {redirect_uri: 'redirect.html',
+           {redirect_uri: 'https://run.mycode.run/redirect.html',
             oauth_proxy: 'https://auth-server.herokuapp.com/proxy'});
 
 hello.on('auth.login', sessionStart);

@@ -385,8 +385,11 @@ public class TestMain {\n\
              * Prompt the user for a GithHub repo and load the files from that repo 
              */
             function loadRepo() {
-                gitHub.listRepos(function(repos){
-                    console.log(repos);
+                gitHub.getRepos(function(repos){
+                    
+                    repos.forEach(function(repo) {
+                        console.log(repo.full_name);
+                    });
                 }, 
                 function(e) {
                     alert('GitHub communication error: ' + e.error.message);
