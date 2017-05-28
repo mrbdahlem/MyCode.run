@@ -458,12 +458,13 @@ public class TestMain {\n\
                             });
                     }
                     else {
-                        console.log("done");
                         done(target);
                     }
                 }
                 
                 gitHub.repos = [];
+                console.log("Repos path: " + gitHub.repos_url);
+                
                 hello('github').api(gitHub.repos_url).then(
                     function(response){
                         addAllRepos(gitHub.repos, response, done, error);
