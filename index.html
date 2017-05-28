@@ -447,9 +447,12 @@ public class TestMain {\n\
                         target.push(repo);
                     });
                     
+                    console.log("here");
+                    
                     if (json.paging && json.paging.next) {
                         hello('github').api(this.paging.next).then(
                             function(response){
+                                console.log("more");
                                 addAllRepos(target, response, done, error);
                             },
                             function(e) {
@@ -457,6 +460,7 @@ public class TestMain {\n\
                             });
                     }
                     else {
+                        console.log("done");
                         done(target);
                     }
                 }
