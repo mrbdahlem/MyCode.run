@@ -469,7 +469,7 @@ public class TestMain {\n\
                     }
                 }
                 
-                this.repos = "";
+                this.repos = [];
                 hello('github').api(this.repos_url).then(
                     function(response){
                         addAllRepos(this.repos, response, done, error);
