@@ -432,8 +432,6 @@ public class TestMain {\n\
             
             gitHub.listRepos = function(done, error) {
                 var addAllRepos = function(target, json, done, error) {
-                    console.log("Starting");
-                    
                     json.data.forEach(function(data) {
                         var repo = {};
                         repo.id = data.id;
@@ -447,16 +445,12 @@ public class TestMain {\n\
                         repo.default_branch = data.default_branch;
                         repo.permissions = data.permissions;
                         target.push(repo);
-                        
-                        console.log("next...");
                     });
-                    
-                    console.log("here");
                     
                     if (json.paging && json.paging.next) {
                         hello('github').api(json.paging.next).then(
                             function(response){
-                                console.log("more");
+                                console.log("retrieving next page of repos...");
                                 addAllRepos(target, response, done, error);
                             },
                             function(e) {
@@ -470,7 +464,7 @@ public class TestMain {\n\
                 }
                 
                 gitHub.repos = [];
-                hello('github').api(gitHub.repos_url, 'get', {"per_page": 1}).then(
+                hello('github').api(gitHub.repos_url).then(
                     function(response){
                         addAllRepos(gitHub.repos, response, done, error);
                     },
