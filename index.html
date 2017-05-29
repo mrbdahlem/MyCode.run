@@ -122,7 +122,6 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title" id="outputModalTitle">Modal title</h4>
-                        
                     </div>
                     <div class="modal-body" id="outputModalBody">
                         <!-- Dropdown to select test-case output when code is "tested" -->
@@ -145,6 +144,24 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
+        <!-- Hidden modal to display a list of repos -->
+        <div class="modal fade" id="listModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog  modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="listModalTitle">Modal title</h4>
+                    </div>
+                    <div class="modal-body" id="listModalBody">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
         <!-- jquery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Bootstrap compiled and minified JavaScript -->
@@ -386,17 +403,27 @@ public class TestMain {\n\
              */
             function loadRepo() {
                 gitHub.getRepos(function(repos){
-                    
+                    $('#listModalTitle').text("Select Repo");
+                    var list = document.createElement('ul');
+                    $('listModalBody').clear();
+                    $('listModalBody').append(list);
+                        
                     repos.forEach(function(repo) {
+                        var li = document.createElement('li');
+                        var a = document.createElement('a');
+                        li.appendChild(a);
+                        a.text(repo.full_name);
                         console.log(repo.full_name);
+                        
                     });
+                    $('#listModal').modal('show');
                 }, 
                 function(e) {
                     alert('GitHub communication error: ' + e.error.message);
                 });             
             }
             
-            function selectRepo() {
+            function selectRepo(repoName) {
                 
             }
             
