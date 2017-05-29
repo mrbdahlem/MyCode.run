@@ -101,11 +101,9 @@ gitHub.getRepos = function(done, error) {
  * Load the files from a github repo into a FileManager
  */
 gitHub.loadRepo = function(fileManager, repo) {
-    console.log(repo.default_branch);
-    console.log(repo.branches_url);
     
-    var branch = repo.branches_url.replace(/\{*\}/, "/" + repo.default_branch);
-    
+    var branch = repo.branches_url.replace(/\{.*\}/, "/" + repo.default_branch);
+    console.log(branch);
     hello.api(branch).then(function(response) {
         console.log(response);
     },
