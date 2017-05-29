@@ -101,19 +101,49 @@ gitHub.getRepos = function(done, error) {
  * Load the files from a github repo into a FileManager
  */
 gitHub.loadRepo = function(fileManager, repo) {
-    
     var branch = repo.branches_url.replace(/\{.*\}/, "/" + repo.default_branch);
     hello('github').api(branch).then(function(response) {
-        console.log(response);
-        hello('github').api(response.commit.commit.tree.url).then(function(response) {
-            console.log(response);
-        },
-        function (e){
-            alert("Error loading latest commit: " + e.error.message)
-        });
+        fileManager.empty();
+        var folder = fileManager.getRootFolder();
+        loadTree(folder, response.commit.commit.tree.url, fileManager);
     },
     function(e) {
         alert('Error loading Repo branch: ' + e.error.message);
+    });
+};
+
+gitHub.loadTree = function(folder, tree, fileManager) {
+    hello('github').api(tree).then(function(response) {
+        response.tree.forEach(item)(function(item){
+            if (item.type === "tree") {
+                var subFolder = Folder(item.path, tree);
+                loadTree(subFolder, item.url, fileManager);
+            }
+            else if (item.type == "blob") {
+                gitHub.loadFile(folder, item.path, item.url);
+            }
+        });
+        
+        fileManager.updateDisplay();
+        
+        // If there are more pages of items in the tree,
+        if (response.paging && response.paging.next) {
+            loadTree(response.paging.next);
+        }
+    },
+    function (e){
+        alert("Error loading tree: " + e.error.message);
+    });    
+};
+
+gitHub.loadFile = function(folder, name, url) {
+    hello('github').api(url).then(function(response) {
+        var content = window.btoa(response.content);
+        var file = SourceFile(name, content);
+        folder.addFile(file);
+    },
+    function(e) {
+        alert("Error loading file: " + e.error.message);
     });
 };
 
