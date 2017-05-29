@@ -151,6 +151,7 @@ gitHub.loadFile = function(folder, name, url, fileManager) {
             if (isMain.test(file.contents)) {
                 // Set the main file if it does
                 FileManager.setMainFile(file);
+                FileManager.setCurrentFile(file);
                 console.log('No main class specified. ' + file.name + ' chosen.');
             }
         }
