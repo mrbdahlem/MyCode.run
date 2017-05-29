@@ -405,7 +405,7 @@ public class TestMain {\n\
                 gitHub.getRepos(function(repos){
                     $('#listModalTitle').text("Select Repo");
                     var list = document.createElement('ul');
-                    $('listModalBody').empty();
+                    $('#listModalBody').empty();
                         
                     repos.forEach(function(repo) {
                         var li = document.createElement('li');
@@ -415,7 +415,7 @@ public class TestMain {\n\
                         $(a).text(repo.full_name);                        
                     });
                     
-                    $('listModalBody').append(list);
+                    $('#listModalBody').append(list);
                     $('#listModal').modal('show');
                 }, 
                 function(e) {
