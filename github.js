@@ -116,7 +116,7 @@ gitHub.loadTree = function(folder, tree, fileManager) {
     console.log("Tree: " + tree);
     hello('github').api(tree).then(function(response) {
         console.log(response);
-        response.tree.forEach(item)(function(item){
+        response.tree.forEach(function(item){
             if (item.type === "tree") {
                 console.log("Tree: " + item.path);
                 var subFolder = Folder(item.path, tree);
