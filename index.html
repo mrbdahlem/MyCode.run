@@ -448,7 +448,7 @@ public class TestMain {\n\
                 
                 var repo = event.data;
                 FileManager.empty();
-                gitHub.loadRepo(FileManager, repo);
+                gitHub.loadRepo(FileManager, repo, null);
                 
                 var params = new URLSearchParams(window.location.search);
                 params.set('repo', repo.full_name);
