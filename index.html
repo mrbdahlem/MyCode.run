@@ -250,8 +250,21 @@
                             alert(txtStatus + " error retrieving gist " + error);
                         });
             }
+            // or if the url contains a GitHub repo
+            else if (params.has('repo')) {
+                var main = null;
+                
+                if (params.has('main')) {
+                    main = decodeURI(params.get('main'));
+                    console.log('Main class: ' + main);
+                }
+                
+                var repoName = decodeURI(params.get('repo'));
+                // Download files from github repo
+                gitHub.getRepo(repoName, FileManager, main);
+            }
+            // otherwise, create a sample project
             else {
-                // otherwise, create a sample project
                 var mainFile = new SourceFile();
                 mainFile.name = "Main.java";
                 mainFile.contents = 

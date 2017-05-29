@@ -32,6 +32,24 @@ gitHub.ensureLogin = function(callback, errorCallback) {
 }
 
 /*
+ * Download a repo from GitHub
+ */
+gitHub.getRepo = function(fullName, fileManager, main) {
+    gitHub.ensureLogin(function(){
+        hello('github').api('/repos/'+fullName).then(function(data) {
+            var repo = gitHub.repoFromData(data);
+            gitHub.loadRepo(fileManager, repo, main);
+        },
+        function(e) {
+            alert("Could not load + " + fullName + ": " + e.error.message);
+        })
+    },
+    function(e) {
+        alert("Could not access " + fullName + ": " + e.error.message);
+    })
+}
+
+/*
  * Get all of the user's repositories
  */
 gitHub.getRepos = function(done, error) {
@@ -41,18 +59,7 @@ gitHub.getRepos = function(done, error) {
     var addAllRepos = function(target, json, done, error) {
         // Add all returned repos to the list
         json.data.forEach(function(data) {
-            var repo = {};
-            repo.id = data.id;
-            repo.owner = data.owner.login;
-            repo.name = data.name;
-            repo.full_name = data.full_name;
-            repo.description = data.description;
-            repo.url = data.url;
-            repo.branches_url = data.branches_url;
-            repo.git_commits_url = data.git_commits_url;
-            repo.default_branch = data.default_branch;
-            repo.permissions = data.permissions;
-            target.push(repo);
+            target.push(gitHub.repoFromData(data));
         });
 
         // If there are more pages of repos,
@@ -98,9 +105,27 @@ gitHub.getRepos = function(done, error) {
 };
 
 /*
+ * Make a repo object from a GitHub Repo JSON description
+ */
+gitHub.repoFromData = function (data) {
+    var repo = {};
+    repo.id = data.id;
+    repo.owner = data.owner.login;
+    repo.name = data.name;
+    repo.full_name = data.full_name;
+    repo.description = data.description;
+    repo.url = data.url;
+    repo.branches_url = data.branches_url;
+    repo.git_commits_url = data.git_commits_url;
+    repo.default_branch = data.default_branch;
+    repo.permissions = data.permissions;
+    return repo;
+};
+
+/*
  * Load the files from a github repo into a FileManager
  */
-gitHub.loadRepo = function(fileManager, repo) {
+gitHub.loadRepo = function(fileManager, repo, main) {
     var branch = repo.branches_url.replace(/\{.*\}/, "/" + repo.default_branch);
     hello('github').api(branch).then(function(response) {
         fileManager.empty();
@@ -112,25 +137,25 @@ gitHub.loadRepo = function(fileManager, repo) {
     });
 };
 
-gitHub.loadTree = function(folder, tree, fileManager) {
+gitHub.loadTree = function(folder, tree, fileManager, main) {
     hello('github').api(tree).then(function(response) {
         response.tree.forEach(function(item){
             if (item.type === "tree") {
                 var subFolder = new Folder(item.path, folder);
                 folder.addFolder(subFolder);
-                gitHub.loadTree(subFolder, item.url, fileManager);
+                gitHub.loadTree(subFolder, item.url, fileManager, main);
                 
                 fileManager.updateDisplay();
             }
             else if (item.type === "blob") {
-                gitHub.loadFile(folder, item.path, item.url, fileManager);
+                gitHub.loadFile(folder, item.path, item.url, fileManager, main);
             }
         });
         
         
         // If there are more pages of items in the tree,
         if (response.paging && response.paging.next) {
-            gitHub.loadTree(folder, response.paging.next, fileManager);
+            gitHub.loadTree(folder, response.paging.next, fileManager, main);
         }
     },
     function (e){
@@ -138,14 +163,14 @@ gitHub.loadTree = function(folder, tree, fileManager) {
     });    
 };
 
-gitHub.loadFile = function(folder, name, url, fileManager) {
+gitHub.loadFile = function(folder, name, url, fileManager, main) {
     hello('github').api(url).then(function(response) {
         var content = window.atob(response.content);
         var file = new SourceFile(name, content);
         folder.addFile(file);
         
         // check if a main method was specified
-        if (fileManager.getMainFile() === null) {
+        if (main === null) {
             // if not, check if the file has a main method
             var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
             if (isMain.test(file.contents)) {
@@ -154,6 +179,11 @@ gitHub.loadFile = function(folder, name, url, fileManager) {
                 FileManager.setCurrentFile(file);
                 console.log('No main class specified. ' + file.name + ' chosen.');
             }
+        }
+        else if (main === name) {
+            FileManager.setMainFile(file);
+            FileManager.setCurrentFile(file);
+            console.log('Main file set: ' + name);
         }
 
         fileManager.updateDisplay();
