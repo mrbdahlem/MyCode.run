@@ -425,6 +425,8 @@ public class TestMain {\n\
             }
             
             function selectRepo(event) {
+                $('#listModal').modal('hide');
+                
                 var repoName = event.data;
                 console.log(repoName);
             }
