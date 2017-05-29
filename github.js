@@ -104,7 +104,7 @@ gitHub.loadRepo = function(fileManager, repo) {
     
     var branch = repo.branches_url.replace(/\{.*\}/, "/" + repo.default_branch);
     console.log(branch);
-    hello.api(branch).then(function(response) {
+    hello('github').api(branch).then(function(response) {
         console.log(response);
     },
     function(e) {
