@@ -406,7 +406,7 @@ public class TestMain {\n\
                     $('#listModalTitle').text("Select Repo");
                     var list = document.createElement('ul');
                     $('listModalBody').empty();
-                    $('listModalBody').appendChild(list);
+                    $('listModalBody').append(list);
                         
                     repos.forEach(function(repo) {
                         var li = document.createElement('li');
