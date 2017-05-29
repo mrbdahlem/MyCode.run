@@ -411,6 +411,7 @@ public class TestMain {\n\
                     repos.forEach(function(repo) {
                         var li = document.createElement('li');
                         var a = document.createElement('a');
+                        $(list).append(li);
                         $(li).append(a);
                         $(a).text(repo.full_name);
                         console.log(repo.full_name);
