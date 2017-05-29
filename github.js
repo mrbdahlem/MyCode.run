@@ -103,9 +103,14 @@ gitHub.getRepos = function(done, error) {
 gitHub.loadRepo = function(fileManager, repo) {
     
     var branch = repo.branches_url.replace(/\{.*\}/, "/" + repo.default_branch);
-    console.log(branch);
     hello('github').api(branch).then(function(response) {
         console.log(response);
+        hello('github').api(response.commit.commit.tree.url).then(function(response) {
+            console.log(response);
+        },
+        function (e){
+            alert("Error loading latest commit: " + e.error.message)
+        });
     },
     function(e) {
         alert('Error loading Repo branch: ' + e.error.message);
