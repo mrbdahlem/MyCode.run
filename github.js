@@ -115,10 +115,8 @@ gitHub.loadRepo = function(fileManager, repo) {
 gitHub.loadTree = function(folder, tree, fileManager) {
     console.log("Tree: " + tree);
     hello('github').api(tree).then(function(response) {
-        console.log(response);
         response.tree.forEach(function(item){
             if (item.type === "tree") {
-                console.log("Tree: " + item.path);
                 var subFolder = new Folder(item.path, folder);
                 folder.addFolder(subFolder);
                 gitHub.loadTree(subFolder, item.url, fileManager);
@@ -137,15 +135,12 @@ gitHub.loadTree = function(folder, tree, fileManager) {
         }
     },
     function (e){
-        console.log("nono");
         alert("Error loading tree: " + e.error.message);
     });    
 };
 
 gitHub.loadFile = function(folder, name, url, fileManager) {
     hello('github').api(url).then(function(response) {
-        console.log("File: " + name);
-        
         var content = window.atob(response.content);
         var file = new SourceFile(name, content);
         folder.addFile(file);
