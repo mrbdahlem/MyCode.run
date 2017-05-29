@@ -115,6 +115,7 @@ gitHub.loadRepo = function(fileManager, repo) {
 gitHub.loadTree = function(folder, tree, fileManager) {
     console.log(tree);
     hello('github').api(tree).then(function(response) {
+        console.log("Here");
         response.tree.forEach(item)(function(item){
             if (item.type === "tree") {
                 console.log("Tree: " + item.path);
@@ -134,6 +135,7 @@ gitHub.loadTree = function(folder, tree, fileManager) {
         }
     },
     function (e){
+        console.log("nono");
         alert("Error loading tree: " + e.error.message);
     });    
 };
