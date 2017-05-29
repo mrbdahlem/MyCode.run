@@ -406,18 +406,16 @@ public class TestMain {\n\
                     $('#listModalTitle').text("Select Repo");
                     var list = document.createElement('ul');
                     $('listModalBody').empty();
-                    $('listModalBody').append(list);
                         
                     repos.forEach(function(repo) {
                         var li = document.createElement('li');
                         var a = document.createElement('a');
                         $(list).append(li);
                         $(li).append(a);
-                        $(a).text(repo.full_name);
-                        console.log(list);
-                        
+                        $(a).text(repo.full_name);                        
                     });
                     
+                    $('listModalBody').append(list);
                     $('#listModal').modal('show');
                 }, 
                 function(e) {
