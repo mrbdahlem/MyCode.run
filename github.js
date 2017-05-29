@@ -148,11 +148,10 @@ gitHub.loadFile = function(folder, name, url, fileManager) {
         if (fileManager.getMainFile() === null) {
             // if not, check if the file has a main method
             var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
-            if (isMain.test(gistFile.contents)) {
+            if (isMain.test(file.contents)) {
                 // Set the main file if it does
                 FileManager.setMainFile(file);
-                console.log('No main class specified. ' + gistFile.name + ' chosen.');
-                main = gistFile;
+                console.log('No main class specified. ' + file.name + ' chosen.');
             }
         }
 
