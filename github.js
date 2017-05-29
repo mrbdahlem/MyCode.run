@@ -120,6 +120,7 @@ gitHub.loadTree = function(folder, tree, fileManager) {
             if (item.type === "tree") {
                 console.log("Tree: " + item.path);
                 var subFolder = new Folder(item.path, folder);
+                folder.addFolder(subFolder);
                 gitHub.loadTree(subFolder, item.url, fileManager);
             }
             else if (item.type === "blob") {
