@@ -1,5 +1,7 @@
 /*
  * A File Manager singleton, manages source files
+ * 
+ * @type FileManager
  */
 var FileManager = new function() {
     this.folder = new Folder("Files");
@@ -9,8 +11,11 @@ var FileManager = new function() {
     this.fileDisplays = [];
     this.editor = null;
     
-   /*
+    /*
      * Add a file to the current folder
+     * 
+     * @param {File} file   The file object to add
+     * @returns {undefined}
      */
     this.addFile = function(file) {
         this.currentFolder.addFile(file);
@@ -22,6 +27,9 @@ var FileManager = new function() {
     
     /*
      * Add a subfolder to the current folder
+     * 
+     * @param {Folder} folder   The Folder object to add
+     * @returns {undefined}
      */
     this.addFolder = function(folder) {
         this.currentFolder.addFolder(folder);
@@ -35,7 +43,10 @@ var FileManager = new function() {
     /*
      * Remove a file from the manager.  if no file is provided,
      * remove the currently selected file.
-     */ 
+     * 
+     * @param {File} file   the File object to remove
+     * @returns {undefined}
+     */
     this.removeFile = function(file) {
         file = file || this.currentFile;
         
@@ -55,10 +66,13 @@ var FileManager = new function() {
         this.updateDisplay();
     };
     
-   /*
+    /*
      * Remove a folder from the manager.  if no folder is provided,
      * remove the currently selected folder.
-     */ 
+     *
+     * @param {Folder} folder   the Folder object to remove
+     * @returns {undefined}
+     */
     this.removeFolder = function(folder) {
         folder = folder || this.currentFolder;
         
@@ -75,6 +89,8 @@ var FileManager = new function() {
 
     /*
      * Remove all files and folders from this project
+     * 
+     * @returns {undefined}
      */
     this.empty = function() {
         this.rootFolder = new Folder("Files");
@@ -86,6 +102,9 @@ var FileManager = new function() {
     
     /*
      * Making a file the currently selected file
+     *
+     * @param {File} file   the File object to select
+     * @returns {undefined}
      */
     this.setCurrentFile = function(file) {
         this.currentFile = file;
@@ -93,6 +112,9 @@ var FileManager = new function() {
     
     /*
      * Making a folder the currently selected folder
+     *
+     * @param {Folder} folder   the Folder object to select
+     * @returns {undefined}
      */
     this.setCurrentFolder = function(folder) {
         this.currentFolder = folder;
@@ -100,6 +122,8 @@ var FileManager = new function() {
     
     /*
      * Get a reference to the currently selected folder
+     *
+     * @returns {@var;folder.parent|@this;.currentFolder.parent|Folder}
      */
     this.getCurrentFolder = function() {
         return this.currentFolder;
@@ -107,6 +131,9 @@ var FileManager = new function() {
     
     /*
      * Select the main file to be run
+     *
+     * @param {File} file   the file object to set as 'main'
+     * @returns {undefined}
      */
     this.setMainFile = function(file) {
         this.mainFile = file || this.currentFile;
@@ -116,6 +143,8 @@ var FileManager = new function() {
     
     /*
      * Retrieve the main file.
+     *
+     * @returns {FileManager.currentFile|File}
      */
     this.getMainFile = function() {
         return this.mainFile;
@@ -123,6 +152,8 @@ var FileManager = new function() {
     
     /*
      * Retrieve the current file
+     *
+     * @returns {FileManager.currentFile|File}
      */
     this.getFile = function() {
         return this.currentFile;
@@ -130,6 +161,9 @@ var FileManager = new function() {
     
     /*
      * Get the contents of a file based on its file name.
+     * 
+     * @param {File} file   the file object to examine
+     * @returns {String}
      */
     this.getFileContents = function(file) {
         return file.contents;

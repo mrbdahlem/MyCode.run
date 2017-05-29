@@ -446,10 +446,15 @@ public class TestMain {\n\
             function selectRepo(event) {
                 $('#listModal').modal('hide');
                 
-                var repoName = event.data;
+                var repo = event.data;
                 FileManager.empty();
-                gitHub.loadRepo(FileManager, repoName);
-    }
+                gitHub.loadRepo(FileManager, repo);
+                
+                var params = new URLSearchParams(window.location.search);
+                params.set('repo', repo.full_name);
+
+                History.pushState(null, document.title, `${location.pathname}?${params}`);
+            }
             
         </script>
         
