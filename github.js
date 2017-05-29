@@ -144,7 +144,7 @@ gitHub.loadFile = function(folder, name, url) {
     hello('github').api(url).then(function(response) {
         console.log("File: " + name);
         
-        var content = window.btoa(response.content);
+        var content = window.atob(response.content);
         var file = new SourceFile(name, content);
         folder.addFile(file);
     },
