@@ -122,13 +122,14 @@ gitHub.loadTree = function(folder, tree, fileManager) {
                 var subFolder = new Folder(item.path, folder);
                 folder.addFolder(subFolder);
                 gitHub.loadTree(subFolder, item.url, fileManager);
+                
+                fileManager.updateDisplay();
             }
             else if (item.type === "blob") {
-                gitHub.loadFile(folder, item.path, item.url);
+                gitHub.loadFile(folder, item.path, item.url, fileManager);
             }
         });
         
-        fileManager.updateDisplay();
         
         // If there are more pages of items in the tree,
         if (response.paging && response.paging.next) {
@@ -141,13 +142,14 @@ gitHub.loadTree = function(folder, tree, fileManager) {
     });    
 };
 
-gitHub.loadFile = function(folder, name, url) {
+gitHub.loadFile = function(folder, name, url, fileManager) {
     hello('github').api(url).then(function(response) {
         console.log("File: " + name);
         
         var content = window.atob(response.content);
         var file = new SourceFile(name, content);
         folder.addFile(file);
+        fileManager.updateDisplay();
     },
     function(e) {
         alert("Error loading file: " + e.error.message);
