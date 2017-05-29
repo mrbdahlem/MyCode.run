@@ -413,7 +413,7 @@ public class TestMain {\n\
                         $(list).append(li);
                         $(li).append(a);
                         $(a).text(repo.full_name);
-                        $(a).click(repo.full_name, selectRepo)
+                        $(a).click(repo, selectRepo)
                     });
                     
                     $('#listModalBody').append(list);
@@ -428,8 +428,9 @@ public class TestMain {\n\
                 $('#listModal').modal('hide');
                 
                 var repoName = event.data;
-                console.log(repoName);
-            }
+                FileManager.empty();
+                gitHub.loadRepo(FileManager, repoName);
+    }
             
         </script>
         

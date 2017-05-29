@@ -487,6 +487,8 @@ function Folder(name, parent) {
         
         // Sort the list of files
         this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
+        
+        return file;
     };
            
     /*
@@ -498,6 +500,8 @@ function Folder(name, parent) {
         
         // Sort the list of folders
         this.folders.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
+        
+        return folder;
     };
     
     /*
