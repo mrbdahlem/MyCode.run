@@ -130,7 +130,7 @@ gitHub.loadRepo = function(fileManager, repo, main) {
     hello('github').api(branch).then(function(response) {
         fileManager.empty();
         var folder = fileManager.getRootFolder();
-        gitHub.loadTree(folder, response.commit.commit.tree.url, fileManager);
+        gitHub.loadTree(folder, response.commit.commit.tree.url, fileManager, main);
     },
     function(e) {
         alert('Error loading Repo branch: ' + e.error.message);
