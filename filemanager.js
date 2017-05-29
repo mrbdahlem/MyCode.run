@@ -77,9 +77,9 @@ var FileManager = new function() {
      * Remove all files and folders from this project
      */
     this.empty = function() {
-        this.rootFolder = null;
-        this.folder = null;
-        this.currentFolder = null;
+        this.rootFolder = new Folder("Files");
+        this.folder = this.rootFolder;
+        this.currentFolder = this.rootFolder;
         this.mainFile = null;
     };
     
@@ -362,10 +362,6 @@ var FileManager = new function() {
         function handleGist(data) {
             // Get rid of any other files/folders
             FileManager.empty();
-            
-            // Create a new root folder
-            FileManager.folder = new Folder("Files");
-            FileManager.currentFolder = FileManager.folder;
             
             // Extract each of the files in the gist
             Object.keys(data.files).map(function(key){
