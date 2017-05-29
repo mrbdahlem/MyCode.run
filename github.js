@@ -103,6 +103,15 @@ gitHub.getRepos = function(done, error) {
 gitHub.loadRepo = function(fileManager, repo) {
     console.log(repo.default_branch);
     console.log(repo.branches_url);
+    
+    var branch = repo.branches_url.replace(/\{*\}/, "/" + repo.default_branch);
+    
+    hello.api(branch).then(function(response) {
+        console.log(response);
+    },
+    function(e) {
+        alert('Error loading Repo branch: ' + e.error.message);
+    });
 };
 
 /*
