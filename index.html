@@ -412,7 +412,8 @@ public class TestMain {\n\
                         var a = document.createElement('a');
                         $(list).append(li);
                         $(li).append(a);
-                        $(a).text(repo.full_name);                        
+                        $(a).text(repo.full_name);
+                        $(a).click(repo.full_name, selectRepo)
                     });
                     
                     $('#listModalBody').append(list);
@@ -424,7 +425,7 @@ public class TestMain {\n\
             }
             
             function selectRepo(repoName) {
-                
+                console.log(repoName);
             }
             
         </script>
