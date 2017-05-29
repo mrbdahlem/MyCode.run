@@ -105,7 +105,7 @@ gitHub.loadRepo = function(fileManager, repo) {
     hello('github').api(branch).then(function(response) {
         fileManager.empty();
         var folder = fileManager.getRootFolder();
-        loadTree(folder, response.commit.commit.tree.url, fileManager);
+        gitHub.loadTree(folder, response.commit.commit.tree.url, fileManager);
     },
     function(e) {
         alert('Error loading Repo branch: ' + e.error.message);
@@ -118,7 +118,7 @@ gitHub.loadTree = function(folder, tree, fileManager) {
             if (item.type === "tree") {
                 console.log("Tree: " + item.path);
                 var subFolder = Folder(item.path, tree);
-                loadTree(subFolder, item.url, fileManager);
+                gitHub.loadTree(subFolder, item.url, fileManager);
             }
             else if (item.type == "blob") {
                 gitHub.loadFile(folder, item.path, item.url);
@@ -129,7 +129,7 @@ gitHub.loadTree = function(folder, tree, fileManager) {
         
         // If there are more pages of items in the tree,
         if (response.paging && response.paging.next) {
-            loadTree(response.paging.next);
+            gitHub.loadTree(folder, response.paging.next, fileManager);
         }
     },
     function (e){
