@@ -81,7 +81,7 @@ var FileManager = new function() {
         this.folder = this.rootFolder;
         this.currentFolder = this.rootFolder;
         this.mainFile = null;
-        this.setCurrentFile(main);
+        this.setCurrentFile(null);
     };
     
     /*
