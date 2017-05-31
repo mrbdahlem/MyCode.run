@@ -107,7 +107,7 @@ gitHub.getRepos = function (done, error) {
     // Make sure that the user is logged in
     gitHub.ensureLogin(function () {
         // Then request the user's repos
-        hello('github').api('/user/repos?type=all').then(
+        hello('github').api('/user/repos', 'get', "{type: 'all'}").then(
                 function (response) {
                     // Once the repos are received, add them to the repo list
                     addAllRepos(gitHub.repos, response, done, error);
