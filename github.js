@@ -29,10 +29,11 @@ gitHub.ensureLogin = function (callback, errorCallback) {
         var options = {};
         options.scope = ['user', 'repo', 'gist'];
         options.force = false;
-
+        
+        gitHub.successCallback = callback;
+        
         hello('github', options).login().then(function () {
-            // Then call the callback
-            callback();
+            
         },
         function (e) {
             // If there was an error, send it to the callback 
@@ -107,7 +108,7 @@ gitHub.getRepos = function (done, error) {
     // Make sure that the user is logged in
     gitHub.ensureLogin(function () {
         // Then request the user's repos
-        hello('github').api('/user/repos', 'get', "{type: 'all'}").then(
+        hello('github').api(gitHub.repos_url + "?type=all").then(
                 function (response) {
                     // Once the repos are received, add them to the repo list
                     addAllRepos(gitHub.repos, response, done, error);
@@ -272,6 +273,12 @@ function sessionStart() {
     hello('github').api('/me').then(function (json) {
         gitHub.username = json.login;
         gitHub.repos_url = json.repos_url;
+        
+        if (gitHub.successCallback) {
+            var cb = gitHub.successCallback;
+            gitHub.successCallback = null;
+            cb();
+        }
     },
     function (e) {
 
