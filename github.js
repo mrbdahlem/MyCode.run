@@ -270,9 +270,40 @@ gitHub.loadFile = function (folder, name, url, fileManager, main) {
  * Save the open repository
  * @returns {undefined}
  */
-gitHub.saveRepo = function() {
+gitHub.saveRepo = function(fileManager) {
     console.log(gitHub.openRepo);
-}
+    
+    // Build a tree with only the changed files
+    var fileTree = gitHub.buildTree(fileManager.getRootFolder());
+    gitHub.pruneTree(fileTree);
+    console.log(fileTree);
+};
+
+/*
+ * 
+ * @param {Folder} folder
+ * @returns {unresolved}
+ */
+
+gitHub.buildTree = function(folder) {
+    var tree = {};
+    tree.tree = [];
+    
+    folder.folders.forEach(function (subFolder) {
+        tree.tree.push(buildTree(subFolder));
+    });
+    
+    folder.files.forEach(function(file) {
+        var treeFile = {};
+        if (file.changed) {
+            treeFile.changed = file.changed;
+            treeFile.contents = file.contents;
+            treeFile.name = file.name;
+        }
+    });
+    
+    return tree;
+};
 
 /*
  * Callback for auth session starts
