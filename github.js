@@ -168,10 +168,10 @@ gitHub.loadRepo = function (fileManager, repo, main) {
         // Clear out the file manager
         fileManager.empty();
         var folder = fileManager.getRootFolder();
-        fileManager.gitHubRepo = repo.full_name;
         
         // Load the repository into the file manager's root folder
         gitHub.loadTree(folder, response.commit.commit.tree.url, fileManager, main);
+        gitHub.openRepo = repo;
     },
     function (e) {
         alert('Error loading Repo branch: ' + e.error.message);
@@ -265,6 +265,14 @@ gitHub.loadFile = function (folder, name, url, fileManager, main) {
         alert("Error loading file: " + e.error.message);
     });
 };
+
+/*
+ * Save the open repository
+ * @returns {undefined}
+ */
+gitHub.saveRepo = function() {
+    console.log(gitHub.openRepo);
+}
 
 /*
  * Callback for auth session starts

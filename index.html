@@ -93,6 +93,8 @@
                                 </li>
                             </ul>
                         </li>
+                        <li><p class="navbar-btn"><a class="btn btn-secondary btn-block saveButton" role="button" onclick="save();">Save</a></p></li>
+                        
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Run the program! -->
@@ -240,6 +242,10 @@
             if (params.has('nofiles')) {
                 $('.body-filelist').hide();
                 $('.filemenulist').hide();
+            }
+            
+            if (!params.has('repo')) {
+                $('.saveButton').hide();
             }
             
             // If the url contains a GIST id
@@ -458,8 +464,12 @@ public class TestMain {\n\
                 params.delete('gist');
                 
                 History.pushState(null, document.title, `${location.pathname}?${params}`);
+                $('.saveButton').show();
             }
             
+            function save() {
+                gitHub.saveRepo();
+            }
         </script>
         
         <script src="HelloAPIkey.js" type="text/javascript"></script>
