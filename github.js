@@ -99,7 +99,7 @@ gitHub.getRepos = function (done, error) {
             // If there are no more pages of repos, send them to the caller
             done(target);
         }
-    }
+    };
 
     // Clear out the list of repos
     gitHub.repos = [];
@@ -107,7 +107,7 @@ gitHub.getRepos = function (done, error) {
     // Make sure that the user is logged in
     gitHub.ensureLogin(function () {
         // Then request the user's repos
-        hello('github').api('/user/repos').then(
+        hello('github').api('/user/repos?type=all').then(
                 function (response) {
                     // Once the repos are received, add them to the repo list
                     addAllRepos(gitHub.repos, response, done, error);
@@ -195,6 +195,7 @@ gitHub.loadTree = function (folder, tree, fileManager, main) {
             if (item.type === "tree") {
                 // Create a subfolder and load the subtree into it
                 var subFolder = new Folder(item.path, folder);
+                subFolder.sha = item.sha;
                 folder.addFolder(subFolder);
                 gitHub.loadTree(subFolder, item.url, fileManager, main);
 
@@ -229,11 +230,14 @@ gitHub.loadTree = function (folder, tree, fileManager, main) {
 gitHub.loadFile = function (folder, name, url, fileManager, main) {
     // Download the file contents
     hello('github').api(url).then(function (response) {
-        // GitHub files are base64 encoded... decode the contents
+        // GitHub blobs are base64 encoded... decode the contents
         var content = window.atob(response.content);
 
         // Create a new file and add it to the folder
         var file = new SourceFile(name, content);
+        
+        file.sha = response.sha;
+        
         folder.addFile(file);
 
         // check if a main method was specified

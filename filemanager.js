@@ -186,6 +186,7 @@ var FileManager = new function() {
         
         if (file !== null) {
             file.contents = contents;
+            file.changed = true;
         }
     };
     

@@ -413,6 +413,8 @@ public class TestMain {\n\
                     var params = new URLSearchParams(window.location.search);
                     params.set('gist', gist);
                     
+                    params.delete('repo');
+                    
                     History.pushState(null, document.title, `${location.pathname}?${params}`);
                 }   
             }
@@ -453,6 +455,8 @@ public class TestMain {\n\
                 var params = new URLSearchParams(window.location.search);
                 params.set('repo', repo.full_name);
 
+                params.delete('gist');
+                
                 History.pushState(null, document.title, `${location.pathname}?${params}`);
             }
             
