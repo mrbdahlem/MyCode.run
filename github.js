@@ -271,11 +271,11 @@ gitHub.loadFile = function (folder, name, url, fileManager, main) {
  * @returns {undefined}
  */
 gitHub.saveRepo = function(fileManager) {
-    console.log(gitHub.openRepo);
+    //console.log(gitHub.openRepo);
     
     // Build a tree with only the changed files
     var fileTree = gitHub.buildTree(fileManager.getRootFolder());
-    gitHub.pruneTree(fileTree);
+    //gitHub.pruneTree(fileTree);
     console.log(fileTree);
 };
 
@@ -285,12 +285,13 @@ gitHub.saveRepo = function(fileManager) {
  * @returns {unresolved}
  */
 
-gitHub.buildTree = function(folder) {
+gitHub.buildTree = function(folder, name) {
     var tree = {};
     tree.tree = [];
+    tree.name = name;
     
     folder.folders.forEach(function (subFolder) {
-        tree.tree.push(buildTree(subFolder));
+        tree.tree.push(buildTree(subFolder, subFolder.name));
     });
     
     folder.files.forEach(function(file) {
@@ -300,6 +301,8 @@ gitHub.buildTree = function(folder) {
             treeFile.contents = file.contents;
             treeFile.name = file.name;
         }
+        
+        tree.tree.push(treeFile);
     });
     
     return tree;
