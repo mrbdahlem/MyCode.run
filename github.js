@@ -291,16 +291,17 @@ gitHub.buildTree = function(folder, name) {
     tree.name = name;
     
     folder.folders.forEach(function (subFolder) {
-        tree.tree.push(buildTree(subFolder, subFolder.name));
+        tree.tree.push(gitHub.buildTree(subFolder, subFolder.name));
     });
     
     folder.files.forEach(function(file) {
         var treeFile = {};
         if (file.changed) {
             treeFile.changed = file.changed;
-            treeFile.contents = file.contents;
-            treeFile.name = file.name;
         }
+        
+        treeFile.contents = file.contents;
+        treeFile.name = file.name;
         
         tree.tree.push(treeFile);
     });
@@ -311,7 +312,7 @@ gitHub.buildTree = function(folder, name) {
 /*
  * Callback for auth session starts
  */
-function sessionStart() {
+gitHub.sessionStart = function() {
     hello('github').api('/me').then(function (json) {
         gitHub.username = json.login;
         gitHub.repos_url = json.repos_url;
@@ -334,4 +335,4 @@ hello.init({github: 'b80ec7eaa799156bba33'},
         {redirect_uri: 'https://run.mycode.run/redirect.html',
             oauth_proxy: 'https://auth-server.herokuapp.com/proxy'});
 
-hello.on('auth.login', sessionStart);
+hello.on('auth.login', gitHub.sessionStart);
