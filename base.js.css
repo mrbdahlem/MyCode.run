@@ -1,0 +1,279 @@
+body {
+    padding-top: 60px;
+    overflow-y: hidden;
+}
+
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.scrollable {
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.belowheader {
+    border-top: 65px solid white;
+}
+
+.abovebottom {
+    border-bottom: 15px solid white;
+}
+
+#editor {
+    height: 100%;
+}
+
+#viewer{
+    width: 100%;
+}
+
+container {
+    margin: 10px;
+}
+
+.ace_editor {
+    border: 1px solid lightgray;
+    margin: auto;
+}
+
+.ace_editor.fullScreen {
+    height: auto;
+    width: auto;
+    border: 0;
+    margin: 0;
+    position: fixed !important;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.fullScreen {
+    overflow: hidden
+}
+
+.navbar-brand {
+    font-family: Inconsolata;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+.navbar-brand:hover {
+    color: #9d9d9d!important;
+}
+
+.navbar-right {
+    margin-right: 15px;
+}
+
+.row.no-pad {
+  margin-right:0;
+  margin-left:0;
+}
+.row.no-pad > [class*='col-'] {
+  padding-right:0;
+  padding-left:0;
+}
+
+.inset {
+   -moz-box-shadow:    inset 0 0 10px #000000;
+   -webkit-box-shadow: inset 0 0 10px #000000;
+   box-shadow:         inset 0 0 10px #000000;
+}
+
+@media (min-width: 768px) {
+    .fillit {
+        height: 100%;
+        max-height: 100%;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    
+    .file-List {
+        float: left;
+        max-width: 200px;
+        overflow-wrap: break-word;
+    }
+    
+    .appname {
+        display: inline;
+    }
+}
+
+@media (max-width: 767px) {
+    .fillit {
+        height: 100%;
+        max-height: 100%;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+        
+    .filemenulist {
+        display: list-item;
+        color: #9d9d9d;
+    }
+    
+    .body-filelist {
+        display: none;
+    }
+    
+    body {
+        padding-top: 0px;
+        overflow-y: hidden;
+    }
+    
+    .belowheader {
+        border-top: 50px solid white;
+    }
+
+    .abovebottom {
+        border-bottom: 0px solid white;
+    }
+    
+    .container-fluid {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+    
+    .navbar {
+        padding-left: 15px;
+        padding-right: 15px; 
+    }
+}
+
+@media screen and (max-width: 768px) and (max-height: 500px){    
+    .fillit {
+        height: 100%;
+        max-height: 100%;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+        
+    .filemenulist {
+        display: list-item;
+        color: #9d9d9d;
+    }
+    
+    .body-filelist {
+        display: none;
+    }
+    
+    body {
+        padding-top: 0px;
+        overflow-y: hidden;
+    }
+    
+    .belowheader {
+        border-top: 50px solid white;
+    }
+
+    .abovebottom {
+        border-bottom: 0px solid white;
+    }
+    
+    .container-fluid {
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+    
+    .navbar {
+        padding-left: 15px;
+        padding-right: 15px; 
+    }
+}
+
+@media screen and (min-width: 768px),
+       screen and (min-height: 500px){
+    .filemenulist {
+        display: none!important;
+    }
+    
+    .body-filelist {
+        display: inline;
+    }
+}
+
+.in-iframe .belowheader {
+    border-top: 50px solid white;
+}
+
+.in-iframe .abovebottom {
+    border-bottom: 0px solid white;
+}
+    
+.in-iframe .container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+   
+.in-iframe .navbar {
+    padding-left: 15px;
+    padding-right: 15px; 
+}
+
+.nav-list {
+    padding-left: 10px;
+}
+
+.file-List {
+    padding-left: 0px;
+    padding-right: 15px;
+}
+
+.list-root {
+    padding-left: 0px;
+}
+
+.listFile {
+    font-weight: normal;
+}
+
+.active {
+    background-color: #337ab7;
+}
+
+a.dropdown-item {
+    display: block;
+    padding-left: 15px;
+    vertical-align: middle;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 15px;
+}
+
+a.dropdown-item:hover {
+    text-decoration: none;
+    background-color: #337ab7;
+    color: #fff;
+}
+
+a.dropdown-item.failed {
+    color: #c12e2a;
+}
+
+a.dropdown-item.failed:hover {
+    text-decoration: none;
+    background-color: #c12e2a;
+    color: #fff;
+}
+
+a.dropdown-item.failed::before {
+  font-family: "Glyphicons Halflings";
+  content: "\e014";
+  margin-right: 5px;
+}
+
+a.dropdown-item.passed::before {
+  font-family: "Glyphicons Halflings";
+  content: "\e013";
+  margin-right: 5px;
+}
+
+.btn .caret {
+    margin-left: 10px;
+}

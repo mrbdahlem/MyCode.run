@@ -46,7 +46,7 @@
         <!-- Bootstrap theme -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-        <link rel="stylesheet" href="base.css">
+        <link rel="stylesheet" href="base.js.css">
     </head>
     <body>
         <!-- The main navigation bar/header -->
@@ -287,10 +287,8 @@
                 var mainFile = new SourceFile();
                 mainFile.name = "Main.java";
                 mainFile.contents = 
-"public class Main {\n\
-    public static void main(String[] args) {\n\
-        System.out.println(\"Hello World\");\n\
-    }\n\
+"function start() {\n\
+   println(\"Hello World\");\n\
 }";
                 // If the test option was specified
                 if (params.has('test')) {
