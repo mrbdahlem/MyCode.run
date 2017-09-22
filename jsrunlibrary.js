@@ -13,7 +13,7 @@ function print(text) {
   con.textContent = conTxt;
 
   // Make sure the console is visible
-  con.style.display = "block";
+  con.parentElement.style.display = "block";
   
   console.runjs_log(text);
 }
@@ -120,5 +120,12 @@ function readBoolean(promptTxt) {
 if (console.runjs_log === undefined) {
     console.runjs_log = console.log;
     console.log = println;
+    
+    console.runjs_error = console.error;
+    console.error = function(txt){println('\u26D4' + txt);};;
+    
+    
+    console.runjs_warn = console.warn;
+    console.warn = function(txt){println('\u2757' + txt);};
 }
     

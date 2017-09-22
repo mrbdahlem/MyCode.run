@@ -9,6 +9,7 @@ var FileManager = new function() {
     this.currentFolder = this.folder;
     this.fileDisplays = [];
     this.editor = null;
+    this.startFunc = "start();";
     
     /*
      * Add a file to the current folder
@@ -94,7 +95,7 @@ var FileManager = new function() {
     };
     
     /*
-     * Making a file the currently selected file
+     * Make a file the currently selected file
      *
      * @param {File} file   the File object to select
      * @returns {undefined}
@@ -104,7 +105,7 @@ var FileManager = new function() {
     };
     
     /*
-     * Making a folder the currently selected folder
+     * Make a folder the currently selected folder
      *
      * @param {Folder} folder   the Folder object to select
      * @returns {undefined}
@@ -120,6 +121,26 @@ var FileManager = new function() {
      */
     this.getCurrentFolder = function() {
         return this.currentFolder;
+    };
+    
+    /*
+     * Set the function call to make to run the code.
+     *
+     * @param {String} func   the function call to make to run the code
+     * @returns {undefined}
+     */
+    this.setStartFunction = function(func) {
+        this.startFunc = func;
+    };
+         
+    
+    /*
+     * Retrieve the function call to make in order to run the code.
+     *
+     * @returns {String}   the function call to make to run the code
+     */
+    this.getStartFunction = function() {
+        return this.startFunc;
     };
           
     /*

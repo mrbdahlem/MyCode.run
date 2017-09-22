@@ -13,13 +13,17 @@
 function runCode() {
     $.get('runJS.html', function( response) {
         let ifr = document.getElementById("outputFrame");
+        let src = response.replace('<!--#SCRIPTS#-->', 
+            '<script>' + FileManager.getAllJSFileContents() + '</script>');
+        src = src.replace('<!--#STARTFUNCTION#-->', FileManager.getStartFunction());
         
+        ifr.srcdoc=src;
+        
+        /*
         let doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
-
         
-        doc.write(response.replace('<!--#SCRIPTS#-->', 
-            '<script>' + FileManager.getAllJSFileContents() + '</script>'));
-        
+        doc.write(src);
+        */
     });
 }
 

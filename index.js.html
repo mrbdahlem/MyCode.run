@@ -76,6 +76,8 @@
                             <li><a onclick="renameFile();">Rename this file...</a></li>
                             <li><a onclick="FileManager.removeFile();">Remove this file</a></li>
                             <li class="divider"></li>
+                            <li><a onclick="setStartFunction();">Set start function...</a></li>
+                            <li class="divider"></li>
                             <li><a onclick="newFolder();">New Folder...</a></li>
                             <li><a onclick="renameFolder();">Rename the current folder...</a></li>
                             <li><a onclick="removeFolder();">Remove the current folder...</a></li>
@@ -118,7 +120,9 @@
                     <pre id="editor" class="fillit"></pre>
                 </div>
                 <div class="fillit flex">
-                    <iframe id="outputFrame" title="outputFrame" class="fillit flex" style="width:100%;"></iframe>
+                    <iframe id="outputFrame" title="outputFrame" 
+                            class="fillit flex" style="width:100%; border: 1px solid;" 
+                            sandbox="allow-forms allow-pointer-lock allow-popups allow-scripts allow-same-origin"></iframe>
                 </div> 
             </div> <!-- editor row -->
         </div> <!-- /.container -->
@@ -271,8 +275,7 @@
                 mainFile.contents = "\
 function start() {\n\
     console.log(\"Hello World\");\n\
-}\n\n\
-start();\n";
+}";
                 // If the test option was specified
                 if (params.has('test')) {
                     // Add a JUnit test file
@@ -313,6 +316,17 @@ start();\n";
 
                 if (filename !== null) {
                     FileManager.renameFile(filename);
+                }
+            }
+            
+            /*
+             * Set the starting function to call to run the user code.
+             */
+            function setStartFunction() {
+                var funcname = getUserInput("New start function:", "start();");
+
+                if (funcname !== null) {
+                    FileManager.setStartFunction(funcname);
                 }
             }
 
