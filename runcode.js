@@ -1,4 +1,4 @@
-/* global FileManager, Infinity, ace, HELLO_API_KEY, apigClientFactory, FileManger */
+/* global FileManager, Infinity, ace, HELLO_API_KEY, apigClientFactory */
 
 var display = null;
 
