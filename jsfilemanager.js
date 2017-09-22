@@ -179,7 +179,11 @@ var FileManager = new function() {
         }
         
         for (let i = 0; i < currFolder.getNumFolders(); i++) {
-            contents += getAllJSFileContents(currFolder.getFolder(i));
+            let folder = currFolder.getFolder(i);
+            
+            if ('Test' !== folder.getName()) {
+                contents += this.getAllJSFileContents(currFolder.getFolder(i));
+            }
         }
         
         return contents;  
@@ -191,6 +195,22 @@ var FileManager = new function() {
     
     this.getRootFolder = function() {
         return this.folder;
+    };
+    
+    
+    /*
+     * Get the test case folder
+     * 
+     * @returns {Folder} the Test folder, or null
+     */
+    this.getTestFolder = function() {
+        for (let i = 0; i < this.folder.getNumFolders(); i++) {
+            let folder = this.folder.getFolder(i);
+            if (folder.name === 'Test') {
+                return folder;
+            }
+        }
+        return null;
     };
     
     /*

@@ -282,7 +282,35 @@ function start() {\n\
                     var testFile = new SourceFile();
                     testFile.name = "test_mycode.js";
                     testFile.contents = "\
-//need to do something here to test the code.";
+var testConsoleText = '';\n\
+\n\
+function catchLog() {\n\
+    if (console.testjs_log === undefined) {\n\
+        console.testjs_log = console.log;\n\
+        console.log = testLn;\n\
+    }\n\
+\n\
+    return console.testjs_log;\n\
+}\n\
+\n\
+function testLn(txt) {\n\
+    testConsoleText = testConsoleText + txt + '\\n';\n\
+};\n\
+\n\
+function runTests() {\n\
+    var output = catchLog();\n\
+\n\
+    start();\n\
+    \n\
+    if (testConsoleText == 'Hello World\\n') {\n\
+        output('\\uD83D\\uDC4D Test Passed: Correct Output');\n\
+    }\n\
+    else {\n\
+        output('\\uD83D\\uDC4E Test Failed: Incorrect Output');\n\
+    }\n\
+}\n\
+\n\
+runTests();";
                     // and place it in a "Test" folder
                     var testFolder = new Folder("Test");
                     testFolder.addFile(testFile);
@@ -293,6 +321,7 @@ function start() {\n\
                 // Add the sample file(s) to the filemanager
                 FileManager.setCurrentFile(mainFile);
                 FileManager.addFile(mainFile);
+                FileManager.setStartFunction("start();");
             }
 
             /*

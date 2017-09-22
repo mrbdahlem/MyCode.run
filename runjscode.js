@@ -32,5 +32,27 @@ function runCode() {
  * sheets into the index.html file, then displaying the result.
  */
 function testCode() {
+    $.get('runJS.html', function( response) {
+        let ifr = document.getElementById("outputFrame");
+        
+        let folder = FileManager.getTestFolder();
+        
+        if (folder !== null) {
+            let tests = FileManager.getAllJSFileContents(folder);
 
+            let src = response.replace('<!--#SCRIPTS#-->', 
+                '<script>' + FileManager.getAllJSFileContents() + tests 
+                + '</script>');
+        
+            ifr.srcdoc=src;
+        }
+        else {
+            ifr.srcdoc='No Test folder or Test cases found.';
+        }
+        /*
+        let doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
+        
+        doc.write(src);
+        */
+    });
 }
