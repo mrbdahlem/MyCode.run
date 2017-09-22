@@ -7,9 +7,9 @@ var FileManager = new function() {
     this.folder = new Folder("Files");
     this.currentFile = null;
     this.currentFolder = this.folder;
-    this.mainFile = "";
     this.fileDisplays = [];
     this.editor = null;
+    this.startFunc = "start();";
     
     /*
      * Add a file to the current folder
@@ -54,11 +54,6 @@ var FileManager = new function() {
         if (file) {
             file.parent.removeFile(file);
 
-            // If this was the main file, there is no main now.
-            if (this.mainFile === file) {
-                this.mainFile = null;
-            }
-
             // Empty the file editor
             this.currentFile = null;
         }
@@ -96,12 +91,11 @@ var FileManager = new function() {
         this.rootFolder = new Folder("Files");
         this.folder = this.rootFolder;
         this.currentFolder = this.rootFolder;
-        this.mainFile = null;
         this.setCurrentFile(null);
     };
     
     /*
-     * Making a file the currently selected file
+     * Make a file the currently selected file
      *
      * @param {File} file   the File object to select
      * @returns {undefined}
@@ -111,7 +105,7 @@ var FileManager = new function() {
     };
     
     /*
-     * Making a folder the currently selected folder
+     * Make a folder the currently selected folder
      *
      * @param {Folder} folder   the Folder object to select
      * @returns {undefined}
@@ -130,26 +124,25 @@ var FileManager = new function() {
     };
     
     /*
-     * Select the main file to be run
+     * Set the function call to make to run the code.
      *
-     * @param {File} file   the file object to set as 'main'
+     * @param {String} func   the function call to make to run the code
      * @returns {undefined}
      */
-    this.setMainFile = function(file) {
-        this.mainFile = file || this.currentFile;
-        
-        this.updateDisplay();
+    this.setStartFunction = function(func) {
+        this.startFunc = func;
     };
+         
     
     /*
-     * Retrieve the main file.
+     * Retrieve the function call to make in order to run the code.
      *
-     * @returns {FileManager.currentFile|File}
+     * @returns {String}   the function call to make to run the code
      */
-    this.getMainFile = function() {
-        return this.mainFile;
+    this.getStartFunction = function() {
+        return this.startFunc;
     };
-    
+          
     /*
      * Retrieve the current file
      *
@@ -169,12 +162,55 @@ var FileManager = new function() {
         return file.contents;
     };
     
+    
+    /*
+     * Get the contents of all .js files concatenated together
+     * 
+     * @returns {String}
+     */
+    this.getAllJSFileContents = function(folder) {
+        let contents = "";
+        
+        let currFolder = folder || this.folder;
+
+        for (let i = 0; i < currFolder.getNumFiles(); i++) {
+            contents += currFolder.getFile(i).contents;
+            contents += '\n';
+        }
+        
+        for (let i = 0; i < currFolder.getNumFolders(); i++) {
+            let folder = currFolder.getFolder(i);
+            
+            if ('Test' !== folder.getName()) {
+                contents += this.getAllJSFileContents(currFolder.getFolder(i));
+            }
+        }
+        
+        return contents;  
+    };
+    
     /*
      * Get a reference to the root folder
      */
     
     this.getRootFolder = function() {
         return this.folder;
+    };
+    
+    
+    /*
+     * Get the test case folder
+     * 
+     * @returns {Folder} the Test folder, or null
+     */
+    this.getTestFolder = function() {
+        for (let i = 0; i < this.folder.getNumFolders(); i++) {
+            let folder = this.folder.getFolder(i);
+            if (folder.name === 'Test') {
+                return folder;
+            }
+        }
+        return null;
     };
     
     /*
@@ -344,15 +380,8 @@ var FileManager = new function() {
         // Add an icon for the file
         var icon = document.createElement('span');        
         $(icon).addClass('glyphicon');
-        
-        // If this file is the main file, add a marker
-        if (file === this.mainFile) {
-            $(icon).addClass('glyphicon-play-circle');
-        }
-        // Otherwise add a file icon
-        else {
-            $(icon).addClass('glyphicon-file');
-        }        
+        $(icon).addClass('glyphicon-file');
+             
         $(title).append(icon);
         $(title).append('&nbsp;');
         
@@ -380,7 +409,7 @@ var FileManager = new function() {
     /*
      * Download all of the files from a Gist, chosen by id
      */
-    this.loadFromGist = function(gist, main, errorhandler) { 
+    this.loadFromGist = function(gist, errorhandler) { 
         // Download the files from the gist asynchronously
         $.ajax({
             url: 'https://api.github.com/gists/' + gist,
@@ -404,37 +433,9 @@ var FileManager = new function() {
                 var gistFile = new SourceFile(key, data.files[key].content);
                 
                 // add the file to the file manager
-                FileManager.addFile(gistFile);
-                
-                // check if a main method was specified
-                if (main === null) {
-                    // if not, check if the file has a main method
-                    var isMain = /(public\s+static|static\s+public)\s+void\s+main\s*\(\s*String\s*\[\]/;
-                    if (isMain.test(gistFile.contents)) {
-                        // Set the main file if it does
-                        FileManager.setMainFile(gistFile);
-                        console.log('No main class specified. ' + gistFile.name + ' chosen.');
-                        main = gistFile;
-                    }
-                }
-                else {
-                    // if a main method was specified, select it
-                    if (main === gistFile.name) {
-                        FileManager.setMainFile(gistFile);
-                        console.log('Main class set to ' + gistFile.name);
-                        main = gistFile;
-                    }
-                }
+                FileManager.addFile(gistFile);                
             });
-            
-            // Open the main method
-            if (main !== null) {
-                FileManager.setCurrentFile(main);
-            }
-            else {
-                FileManager.setCurrentFile(null);
-            }
-            
+                        
             FileManager.updateDisplay();
         }
     };
