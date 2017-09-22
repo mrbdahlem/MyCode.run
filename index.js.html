@@ -288,6 +288,11 @@ function start() {\n\
                     testFile.contents = "\
 var testConsoleText = '';\n\
 \n\
+function TestResult(passed, description) {\n\
+    this.passed = passed;\n\
+    this.description = description;\n\
+}\n\
+\n\
 function catchLog() {\n\
     if (console.testjs_log === undefined) {\n\
         console.testjs_log = console.log;\n\
@@ -297,21 +302,68 @@ function catchLog() {\n\
     return console.testjs_log;\n\
 }\n\
 \n\
+function returnLog() {\n\
+    if (console.testjs_log !== undefined) {\n\
+        console.log = console.testjs_log;\n\
+        delete console.testjs_log;\n\
+    }\n\
+}\n\
+\n\
 function testLn(txt) {\n\
     testConsoleText = testConsoleText + txt + '\\n';\n\
-};\n\
+}\n\
+\n\
+function resetConsole() {\n\
+    testConsoleText = '';\n\
+}\n\
+\n\
+function showResults(results) {\n\
+\n\
+    returnLog();\n\
+\n\
+    let passCount = 0;\n\
+    let output = '';\n\
+\n\
+    results.map(function(res, idx) {\n\
+\n\
+        if (res.passed) {\n\
+            passCount++;\n\
+            output += '\\uD83D\\uDC4D Test ' + (idx + 1) + ' Passed: ';\n\
+            output += res.description + '\\n';\n\
+        }\n\
+        else {\n\
+            output += '\\uD83D\\uDC4E Test ' + (idx + 1) + ' Failed: ';\n\
+            output += res.description + '\\n';\n\
+        }\n\
+\n\
+    });\n\
+\n\
+    output += '\\n\\t' + passCount + ' of ' + results.length + ' tests passed.';\n\
+    console.log(output);\n\
+}\n\
+\n\
+function test1() {\n\
+    start();\n\
+\n\
+    if (testConsoleText == 'Hello World\\n') {\n\
+        return new TestResult(true, 'Correct Output');\n\
+    }\n\
+    else {\n\
+        return new TestResult(false, 'Incorrect Output');\n\
+    }\n\
+\n\
+}\n\
 \n\
 function runTests() {\n\
     var output = catchLog();\n\
+    var results = [];\n\
 \n\
-    start();\n\
-    \n\
-    if (testConsoleText == 'Hello World\\n') {\n\
-        output('\\uD83D\\uDC4D Test Passed: Correct Output');\n\
-    }\n\
-    else {\n\
-        output('\\uD83D\\uDC4E Test Failed: Incorrect Output');\n\
-    }\n\
+    results.push(test1());\n\
+    resetConsole();\n\
+\n\
+    returnLog();\n\
+\n\
+    showResults(results);\n\
 }\n\
 \n\
 runTests();";
