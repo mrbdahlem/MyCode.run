@@ -278,7 +278,7 @@
                 mainFile.name = "mycode.js";
                 mainFile.contents = "\
 function start() {\n\
-    console.log(\"Hello World\");\n\
+    console.log(\"Hi \" + readLine(\"What's your name?\") + \".\");\n\
 }";
                 // If the test option was specified
                 if (params.has('test')) {
@@ -287,6 +287,8 @@ function start() {\n\
                     testFile.name = "test_mycode.js";
                     testFile.contents = "\
 var testConsoleText = '';\n\
+var testjs_prompt = null;\n\
+var testInput = [];\n\
 \n\
 function TestResult(passed, description) {\n\
     this.passed = passed;\n\
@@ -302,6 +304,15 @@ function catchLog() {\n\
     return console.testjs_log;\n\
 }\n\
 \n\
+function redirectInput() {\n\
+    if (testjs_prompt === null) {\n\
+        testjs_prompt = prompt;\n\
+        prompt = nextTestInput;\n\
+    }\n\
+\n\
+    return testjs_prompt;\n\
+}\n\
+\n\
 function returnLog() {\n\
     if (console.testjs_log !== undefined) {\n\
         console.log = console.testjs_log;\n\
@@ -309,8 +320,24 @@ function returnLog() {\n\
     }\n\
 }\n\
 \n\
+function returnInput() {\n\
+    if (testjs_prompt !== null) {\n\
+        prompt = testjs_prompt;\n\
+        delete testjs_prompt;\n\
+    }\n\
+}\n\
+\n\
 function testLn(txt) {\n\
     testConsoleText = testConsoleText + txt + '\\n';\n\
+}\n\
+\n\
+function nextTestInput() {\n\
+    if (testInput) {\n\
+        return testInput.shift();\n\
+    }\n\
+    else {\n\
+        return null;\n\
+    }\n\
 }\n\
 \n\
 function resetConsole() {\n\
@@ -325,7 +352,6 @@ function showResults(results) {\n\
     let output = '';\n\
 \n\
     results.map(function(res, idx) {\n\
-\n\
         if (res.passed) {\n\
             passCount++;\n\
             output += '\\uD83D\\uDC4D Test ' + (idx + 1) + ' Passed: ';\n\
@@ -335,7 +361,6 @@ function showResults(results) {\n\
             output += '\\uD83D\\uDC4E Test ' + (idx + 1) + ' Failed: ';\n\
             output += res.description + '\\n';\n\
         }\n\
-\n\
     });\n\
 \n\
     output += '\\n\\t' + passCount + ' of ' + results.length + ' tests passed.';\n\
@@ -343,9 +368,11 @@ function showResults(results) {\n\
 }\n\
 \n\
 function test1() {\n\
+    testInput = ['Joe'];\n\
+\n\
     start();\n\
 \n\
-    if (testConsoleText == 'Hello World\\n') {\n\
+    if (testConsoleText == 'Hi Joe.\\n') {\n\
         return new TestResult(true, 'Correct Output');\n\
     }\n\
     else {\n\
@@ -355,8 +382,9 @@ function test1() {\n\
 }\n\
 \n\
 function runTests() {\n\
-    var output = catchLog();\n\
-    var results = [];\n\
+    let output = catchLog();\n\
+    let input = redirectInput();\n\
+    let results = [];\n\
 \n\
     results.push(test1());\n\
     resetConsole();\n\
