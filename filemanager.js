@@ -10,6 +10,7 @@ var FileManager = new function() {
     this.mainFile = "";
     this.fileDisplays = [];
     this.editor = null;
+    this.display = null;
     
     /*
      * Add a file to the current folder
@@ -178,6 +179,15 @@ var FileManager = new function() {
     };
     
     /*
+     * Get a file with a specified name
+     * @param {String} name
+     * @returns {File}
+     */
+    this.findFile = function(name) {
+        return this.folder.findFile(name);
+    };
+    
+    /*
      * Replace the contents of a file in the manager, if no file is
      * provided, updates the currently selected file
      */
@@ -230,9 +240,18 @@ var FileManager = new function() {
     
     /*
      * Set the editor that will display and edit the currently selected file
+     * @param {ace} ed the editor
      */
     this.setEditor = function(ed) {
         this.editor = ed;
+    };
+    
+    /*
+     * Set a read-only display for the currently selected file 
+     * @param {ace} disp the display
+     */
+    this.setDisplay = function(disp) {
+        this.display = disp;
     };
     
     /*
@@ -252,6 +271,15 @@ var FileManager = new function() {
                 this.editor.setValue("");
                 this.editor.setReadOnly(true);
             } 
+        }
+        
+        if (this.display !== null) {
+            if (this.currentFile !== null) {
+                this.display.setValue(this.currentFile.contents, 1);
+            }
+            else {
+                this.display.setValue("");
+            }
         }
         
         // If a fileDisplay has been assigned, add a tree of folders and files
@@ -512,15 +540,25 @@ function Folder(name, parent) {
     
     /*
      * Add a file to this folder
+     * @param {SourceFile} file
      */
     this.addFile = function(file) {
-        file.parent = this;
-        this.files.push(file);
+        let oldFile = this.findFile(file.name);
         
-        // Sort the list of files
-        this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
+        if (oldFile === null) {
+            file.parent = this;
+            this.files.push(file);
+            
+            // Sort the list of files
+            this.files.sort(function(a,b){return (b.name<a.name) ? 1 : -1; });
+            return file;
+        }
+        else {
+            oldFile.contents = file.contents;
+            return oldFile;
+        }
         
-        return file;
+       
     };
            
     /*
@@ -553,6 +591,19 @@ function Folder(name, parent) {
         return this.files[num];
     };
     
+    /*
+     * Find a file in this folder by name
+     * @param {String} name
+     * @returns {SourceFile}
+     */
+    this.findFile = function(name) {
+        for (let i = 0; i < this.files.length; i++) {
+            if (this.files[i].name === name) {
+                return this.files[i];
+            }
+        }
+        return null;
+    };
         
     /*
      * Retrieve the number of subfolders in this folder

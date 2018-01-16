@@ -22,7 +22,7 @@ html, body {
     border-bottom: 15px solid white;
 }
 
-#editor {
+#editor, #fileContent {
     height: 100%;
 }
 
@@ -276,4 +276,10 @@ a.dropdown-item.passed::before {
 
 .btn .caret {
     margin-left: 10px;
+}
+
+#finalImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
