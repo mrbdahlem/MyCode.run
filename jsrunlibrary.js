@@ -32,7 +32,7 @@ function readLine(promptTxt) {
   if (rval === null) {
     throw 'Exception: User Cancelled Input';
   }
-
+ 
   // Otherwise, return the input
   return rval;
 }
@@ -46,11 +46,11 @@ function readInt(promptTxt) {
   while (true) {
     // Ask the user for the number
     var rval = prompt(text);
-
+    
     // If the user clicks cancel, throw an exception
     if (rval === null) {
       throw 'Exception: User Cancelled Input';
-    }
+    }    
 
     // Parse out the number the user entered
     rval = parseInt(rval);
@@ -102,7 +102,7 @@ function readBoolean(promptTxt) {
   while (true) {
     // Ask the user for the boolean
     var rval = prompt(text).toLowerCase();
-
+    
     // If the user clicks cancel, throw an exception
     if (rval === null) {
       throw 'Exception: User Cancelled Input';
@@ -116,16 +116,36 @@ function readBoolean(promptTxt) {
     }
   }
 }
+ 
+function jserror(messageOrEvent, source, lineno, colno, error) {
+    if (source === '') {
+        source = ' at line ' + lineno;
+    }
+    else if (source.includes('jsrunlibrary.js')) {
+        source = '';
+    }
+    else {
+        source = ' in ' + source + ' at line ' + lineno;
+    }
+    
+    if (typeof error === 'string') {
+        console.error(error + source);
+    }
+    else {
+        console.error(error.message + source);
+    }
+}
+
+window.onerror = jserror;
 
 if (console.runjs_log === undefined) {
     console.runjs_log = console.log;
     console.log = println;
     
     console.runjs_error = console.error;
-    console.error = function(txt){println('\u26D4' + txt);};;
+    console.error = function(txt){println('\u26D4 ' + txt);};;
     
     
     console.runjs_warn = console.warn;
-    console.warn = function(txt){println('\u2757' + txt);};
+    console.warn = function(txt){println('\u2757 ' + txt);};
 }
-    

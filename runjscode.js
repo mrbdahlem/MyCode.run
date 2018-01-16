@@ -17,13 +17,13 @@ function runCode() {
             '<script>' + FileManager.getAllJSFileContents() + '</script>');
         src = src.replace('<!--#STARTFUNCTION#-->', FileManager.getStartFunction());
         
-        ifr.srcdoc=src;
+        //ifr.srcdoc=src;
         
-        /*
+        
         let doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
         
         doc.write(src);
-        */
+        doc.close();
     });
 }
 
@@ -34,25 +34,32 @@ function runCode() {
 function testCode() {
     $.get('runJS.html', function( response) {
         let ifr = document.getElementById("outputFrame");
+        let src = '';
         
         let folder = FileManager.getTestFolder();
         
         if (folder !== null) {
             let tests = FileManager.getAllJSFileContents(folder);
 
-            let src = response.replace('<!--#SCRIPTS#-->', 
-                '<script>' + FileManager.getAllJSFileContents() + tests 
-                + '</script>');
-        
-            ifr.srcdoc=src;
+            if (tests !== '') {
+                src = response.replace('<!--#SCRIPTS#-->', 
+                    '<script>' + FileManager.getAllJSFileContents() + tests 
+                    + '</script>');
+            }
+            else {
+                src = 'No test code found in Test folder.';
+            }
+            
+            //ifr.srcdoc=src;
         }
         else {
-            ifr.srcdoc='No Test folder or Test cases found.';
+            src = 'No Test folder found.';
         }
-        /*
+        //ifr.srcdoc = src;
+        
         let doc = ifr.contentDocument? ifr.contentDocument: ifr.contentWindow.document;
         
-        doc.write(src);
-        */
+        doc.write(src);        
+        doc.close();
     });
 }
