@@ -192,9 +192,14 @@ function showTestCases(result, menu, display, image, caseList) {
             }
             
             // When this item is clicked
-            $(item).click(function() {  
+            $(item).click(function() {                  
+                let output = detail.body;
+                if (output != "") {
+                    output += "\n";
+                }
+                output += detail.elapsedTime.toPrecision(3) + " seconds elapsed";
                 // Show the results of this test case
-                display.setValue(detail.body, 1);
+                display.setValue(output, 1);
                 
                 image.attr('src', detail.image);
                 image.show();
