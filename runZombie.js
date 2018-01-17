@@ -197,7 +197,7 @@ function showTestCases(result, menu, display, image, caseList) {
                 if (output !== "") {
                     output += "\n";
                 }
-                output += detail.elapsedTime.toPrecision(3) + " seconds elapsed, ";
+                output += "Running: " + detail.elapsedTime.toPrecision(3) + " seconds elapsed, ";
                 output += detail.actCount + " act cycles";
                 
                 // Show the results of this test case
