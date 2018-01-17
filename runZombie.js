@@ -194,10 +194,12 @@ function showTestCases(result, menu, display, image, caseList) {
             // When this item is clicked
             $(item).click(function() {                  
                 let output = detail.body;
-                if (output != "") {
+                if (output !== "") {
                     output += "\n";
                 }
-                output += detail.elapsedTime.toPrecision(3) + " seconds elapsed";
+                output += detail.elapsedTime.toPrecision(3) + " seconds elapsed, ";
+                output += detail.actCount + " act cycles";
+                
                 // Show the results of this test case
                 display.setValue(output, 1);
                 
