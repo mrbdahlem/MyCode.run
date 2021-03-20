@@ -32,7 +32,7 @@
         <script type="text/javascript" src="filemanager.js"></script>
                 
         <!-- Hello.js OAUTH library (no relation to HelloAPI) -->
-        <script src="/lib/hello.all.min.js"></script>
+        <script src="lib/hello.all.min.js"></script>
         
         <!-- GitHub rest API -->
         <script src="github.js"></script>
@@ -170,6 +170,48 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
         
+        <!-- Hidden modal to control code URL generation -->
+        <div class="modal fade" id="saveModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog  modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="saveModalTitle">Save</h4>
+                    </div>
+                    <div class="modal-body" id="saveModalBody">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveShowProject">
+                                Show Project Menu
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveShowFiles">
+                                Show Files List
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveShowRun">
+                                Show Run Button
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label for="saveShowTest">
+                                <input type="checkbox" id="saveShowTest">
+                                Show Test Button
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveModalSaveBtn" onclick="saveUrl()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
         <!-- jquery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Bootstrap compiled and minified JavaScript -->
@@ -178,7 +220,8 @@
         <script src="ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
         <!-- Browser History management -->
         <script src="lib/jquery.history.js"></script>
-        
+        <!-- code compression/decompression -->
+        <script src="lib/lzma/lzma_worker-min.js"></script>
 
         <script>     
             /*
@@ -224,7 +267,10 @@
                 }
             });
             
-            // Check get url parameters
+            // Prepare code compression/decompression
+            //var lzma = new LZMA("lib/lzma/lzma_worker-min.js");
+            
+            // Check/get url parameters
             var params = new URLSearchParams(window.location.search);
             
             if (params.has('norun')) {
@@ -237,14 +283,16 @@
             
             if (params.has('noproject')) {
                 $('.projectmenu').hide();
+                $('.saveButton').hide();
             }
             
             if (params.has('nofiles')) {
                 $('.body-filelist').hide();
                 $('.filemenulist').hide();
+                $('.saveButton').hide();
             }
             
-            if (!params.has('repo')) {
+            if (params.has('gist')) {
                 $('.saveButton').hide();
             }
             
@@ -274,6 +322,35 @@
                 var repoName = decodeURI(params.get('repo'));
                 // Download files from github repo
                 gitHub.getRepo(repoName, FileManager, main);
+            }
+            else if (params.has('code')) {
+                var main = null;
+                
+                if (params.has('main')) {
+                    main = decodeURI(params.get('main'));
+                    console.log('Main class: ' + main);
+                }
+                
+                let base64 = params.get('code');
+                
+                fetch("data:application/octet-stream;base64,"+base64).then(r => r.blob()).then(function(blob){
+                var reader = new FileReader();
+                reader.onload = function(){
+                    let compressed_data = Array.from(new Uint8Array(reader.result));
+                    LZMA.decompress(compressed_data, function(json, error){
+                        if (error) {
+                            alert("Could not decompress code. "+error);
+                            return;
+                        }
+
+                        FileManager.loadFromJson(json);
+                        FileManager.setCurrentFile(FileManager.getMainFile());
+                        FileManager.setCurrentFolder(FileManager.getMainFile().parent);
+                        FileManager.updateDisplay();
+                    });
+                  };
+                reader.readAsArrayBuffer(blob);              
+                });
             }
             // otherwise, create a sample project
             else {
@@ -420,6 +497,7 @@ public class TestMain {\n\
                     params.set('gist', gist);
                     
                     params.delete('repo');
+                    params.delete('code');
                     
                     History.pushState(null, document.title, `${location.pathname}?${params}`);
                 }   
@@ -462,13 +540,88 @@ public class TestMain {\n\
                 params.set('repo', repo.full_name);
 
                 params.delete('gist');
+                params.delete('code');
                 
                 History.pushState(null, document.title, `${location.pathname}?${params}`);
                 $('.saveButton').show();
             }
             
             function save() {
-                gitHub.saveRepo(FileManager);
+                if (gitHub.openRepo) {
+                    gitHub.saveRepo(FileManager);
+                }
+                else {
+                    let saveModal = $('#saveModal');
+                    
+                    saveModal.find('#saveShowRun').prop('checked', !params.has('norun'));
+                    saveModal.find('#saveShowTest').prop('checked', params.has('test'));
+                    saveModal.find('#saveShowProject').prop('checked', !params.has('noproject'));
+                    saveModal.find('#saveShowFiles').prop('checked', !params.has('nofiles'));                   
+                    
+                    saveModal.modal('show');
+                }
+            }
+            
+            function saveUrl() {
+                let saveModal = $('#saveModal');
+                
+                var params = new URLSearchParams(window.location.search);
+                
+                if (!saveModal.find('#saveShowRun').prop('checked')) {
+                    params.set('norun', true);
+                }
+                else {
+                    params.delete('norun');
+                }
+                
+                if (saveModal.find('#saveShowTest').prop('checked')) {
+                    params.set('test', true);
+                }
+                else {
+                    params.delete('test');
+                }
+                
+                if (!saveModal.find('#saveShowProject').prop('checked')) {
+                    params.set('noproject', true);
+                }
+                else {
+                    params.delete('noproject');
+                }
+                
+                if (!saveModal.find('#saveShowFiles').prop('checked')) {
+                    params.set('nofiles', true);
+                }
+                else {
+                    params.delete('nofiles');
+                }
+                
+                params.delete('repo');
+                params.delete('gist');
+                
+                let json = FileManager.saveToJson();
+                
+                LZMA.compress(json, 1, function(compressed, error){
+                    saveModal.modal('hide');
+                    if (error) {
+                        window.alert('Could not compress code!' + error);
+                        console.log(error);
+                        return;
+                    }
+                    
+                    let reader = new FileReader();
+                    reader.onload = function(){
+                        let base64 = reader.result.substr(reader.result.indexOf(",")+1);
+                        params.set('code', base64);
+                        History.pushState(null, document.title, `${location.pathname}?${params}`);
+                        
+                        let temp = $("<input>");
+                        $("body").append(temp);
+                        temp.val(location.href).select();
+                        document.execCommand("copy");
+                        temp.remove();
+                    };
+                    reader.readAsDataURL(new Blob([new Uint8Array(compressed)]));
+                });
             }
         </script>
         
