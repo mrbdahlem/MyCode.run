@@ -466,6 +466,72 @@ var FileManager = new function() {
             FileManager.updateDisplay();
         }
     };
+    
+    this.saveToJson = function() {
+        let tree = {};
+        
+        tree.root = toFolderTree(this.folder, this);
+        
+        console.log(JSON.stringify(tree));
+        
+        return JSON.stringify(tree);
+    };
+    
+    function toFolderTree(folder, fileManager) {
+        let node = {
+            name: folder.getName(),
+            files: [],
+            folders: []
+        };
+        
+        // Add all the files in this folder
+        folder.files.forEach((file) => {
+            let fileNode = {
+                name: file.name,
+                contents: file.contents
+            };
+            
+            if (file === fileManager.mainFile) {
+                fileNode.main = true;
+            }
+            
+            node.files.push(fileNode);
+        });
+        
+        // Recursively add all folders this folder contains
+        folder.folders.forEach((subfolder) => {
+           node.folders.push(buildFolderTree(subfolder));
+        });
+        
+        return node;
+    }
+    
+    this.loadFromJson = function(json) {
+        let tree = JSON.parse(json);
+        
+        this.empty();
+        
+        this.folder = fromFolderTree(tree.root, this);
+    };
+    
+    function fromFolderTree(node, fileManager) {
+        let folder = new Folder(node.name);
+        
+        node.files.forEach((file) => {
+            let sourceFile = new SourceFile(file.name, file.contents);
+            folder.addFile(sourceFile);
+            
+            if (file.main) {
+                fileManager.mainFile = sourceFile;
+            }
+        });
+        
+        node.folders.forEach((subfolder) => {
+            folder.addFolder(fromFolderTree(subfolder));
+        });
+        
+        return folder;
+    }
 };
 
 /*
@@ -557,8 +623,6 @@ function Folder(name, parent) {
             oldFile.contents = file.contents;
             return oldFile;
         }
-        
-       
     };
            
     /*
