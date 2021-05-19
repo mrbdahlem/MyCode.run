@@ -39,6 +39,6 @@ function runCodeCheerp() {
     // Add data files to the request
     addAllDataFiles(root, body.data.dataFiles);
     
-    let newWindow = window.open('./cheerpConsole.html');
+    let newWindow = window.open('./cheerpjConsole.html');
     newWindow.compileData = body;
 }

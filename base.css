@@ -283,3 +283,8 @@ a.dropdown-item.passed::before {
     margin-left: auto;
     margin-right: auto;
 }
+
+.console {
+    background-color: black;
+    color: white;
+}
