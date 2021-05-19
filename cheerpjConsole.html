@@ -136,7 +136,7 @@
                         cheerpjAddStringFile("/str/" + name, content);
                     }
                     
-                    cheerpjRunMain("com.sun.tools.javac.Main", "/app/tools.jar", "/str/" + mainFile ,"-d", "/str/").then(
+                    cheerpjRunMain("com.sun.tools.javac.Main", "/app/tools.jar", "/str/" + mainFile, "-d", "/files/").then(
                         function(r)
                         {
                             // Non-zero exit code means that an error has happened
