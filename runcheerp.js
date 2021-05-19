@@ -25,7 +25,7 @@ function runCodeCheerp() {
         compile: {
             version: 1,
             mainClass: packageName[1] + "." + mainName,
-            mainFile: mainFile,
+            mainFile: mainFile ,
             sourceFiles: []
         },
         data: {
