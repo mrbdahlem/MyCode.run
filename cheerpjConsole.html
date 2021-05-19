@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>run.MyCode</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <!-- favicons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="/manifest.json">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+
+        <!-- Polyfill... make browsers understand the same Javascript -->
+        <script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+        
+        <!-- AWS Lambda API for HelloFunction runner -->
+        <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+        <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+        <script type="text/javascript" src="apigClient.js"></script>
+        
+        <!-- Source File management -->
+        <script type="text/javascript" src="filemanager.js"></script>
+                
+        <!-- Hello.js OAUTH library (no relation to HelloAPI) -->
+        <script src="lib/hello.all.min.js"></script>
+        
+        <!-- GitHub rest API -->
+        <script src="github.js"></script>
+        
+        <!-- Logo font -->
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Inconsolata" />
+        
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Bootstrap theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="base.css">
+    </head>
+    <body>
+        <!-- The main display -->
+        <div class="fillit noscroll">
+           <div class="row no-pad fillit">
+               <!-- the main console -->
+                <div class="col-md-auto fillit">
+                    <pre id="console" class="fillit console"></pre>
+                </div>
+            </div> <!-- editor row -->
+        </div><!-- /.container -->
+
+        
+        <!-- jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Bootstrap compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!-- ace editor -->
+        <script src="ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
+        <!-- Browser History management -->
+        <script src="lib/jquery.history.js"></script>
+
+        <script>
+            
+            // Detect if this page is embedded in another, add css if so
+            $(function() {
+                if (window.self != window.top) {
+                    $(document.body).addClass("in-iframe");
+                }
+            });
+            
+            function loadCheerpJ(readyFunc)
+            {
+                var script = document.createElement("script");
+                script.onload = readyFunc;
+                script.onerror = function(e)
+                {
+                        // Try again
+                        script.parentNode.removeChild(script);
+                        loadCheerpJ();
+                };
+                script.src = "https://cjrtnc.leaningtech.com/2.2/loader.js";
+                document.head.appendChild(script);
+            }
+            
+            loadCheerpJ(function()
+            {
+                var preloadResources=["/lts/rt.jar","/lts/rt.jar.c0.txt","/lts/rt.jar.c1.txt","/lts/rt.jar.c96.txt","/lts/rt.jar.c95.txt","/lts/rt.jar.c81.txt","/lts/rt.jar.c82.txt","/lts/rt.jar.c83.txt","/lts/rt.jar.c84.txt","/lts/rt.jar.c85.txt","/lts/rt.jar.c86.txt","/lts/rt.jar.c87.txt","/lts/rt.jar.c88.txt","/lts/rt.jar.c89.txt","/lts/rt.jar.c90.txt","/lts/rt.jar.c91.txt","/lts/rt.jar.c92.txt","/lts/rt.jar.c93.txt","/lts/rt.jar.c94.txt","/lts/rt.jar.c80.txt","/lt/runtime/rt.jar.sun.reflect.js","/lt/runtime/rt.jar.java.lang.js","/lt/cheerpj/Arial.ttf","/lt/runtime/rt.jar.java.nio.js","/lt/runtime/rt.jar.sun.nio.js","/lts/rt.jar.c10.txt","/lts/rt.jar.c11.txt","/lts/rt.jar.c9.txt","/lt/runtime/rt.jar.java.nio.file.js","/lt/runtime/rt.jar.java.util.concurrent.js","/lt/runtime/rt.jar.sun.net.js","/lt/runtime/rt.jar.sun.security.js","/lt/runtime/rt.jar.com.sun.js","/lt/cheerpj/lib/tzdb.dat","/lt/runtime/rt.jar.sun.nio.fs.js","/lts/meta-index","/lts/meta-index.c0.txt","/lts/rt.jar.c73.txt","/lts/rt.jar.c74.txt","/lts/rt.jar.c72.txt","/lt/runtime/rt.jar.sun.awt.resources.js","/lt/runtime/rt.jar.java.io.js","/lt/runtime/rt.jar.java.util.js","/lt/runtime/rt.jar.java.awt.im.js","/lt/runtime/rt.jar.javax.js","/lt/runtime/rt.jar.java.util.spi.js","/lt/runtime/rt.jar.sun.misc.js","/lt/runtime/rt.jar.java.net.js","/lts/rt.jar.c71.txt","/lts/rt.jar.c70.txt","/lts/rt.jar.c23.txt","/lts/rt.jar.c24.txt","/lts/rt.jar.c22.txt","/lt/runtime/rt.jar.java.js","/lt/runtime/rt.jar.java.util.regex.js","/lts/rt.jar.c2.txt","/lts/rt.jar.c25.txt","/lt/runtime/rt.jar.java.awt.font.js","/lt/runtime/rt.jar.java.text.js","/lt/runtime/rt.jar.sun.awt.geom.js","/lt/runtime/rt.jar.sun.util.locale.js","/lt/cheerpj/lib/ext/localedata.jar","/lt/runtime/rt.jar.sun.util.js","/lt/runtime/rt.jar.sun.text.js","/lt/runtime/rt.jar.sun.awt.util.js","/lt/runtime/rt.jar.java.util.concurrent.atomic.js","/lt/cheerpj/lib/currency.data","/lt/cheerpj/lib/currency.properties","/lts/rt.jar.c17.txt","/lts/rt.jar.c18.txt","/lts/rt.jar.c16.txt","/lts/rt.jar.c15.txt","/lt/cheerpj/lib/accessibility.properties","/lt/runtime/rt.jar.java.lang.invoke.js","/lts/rt.jar.c26.txt","/lts/rt.jar.c69.txt","/lts/rt.jar.c27.txt","/lts/rt.jar.c28.txt","/lts/rt.jar.c66.txt","/lts/rt.jar.c67.txt","/lts/rt.jar.c65.txt","/lts/rt.jar.c68.txt","/lt/runtime/rt.jar.javax.swing.js","/lt/runtime/rt.jar.java.awt.js","/lt/runtime/rt.jar.sun.awt.image.js","/lt/runtime/rt.jar.java.awt.image.js","/lt/runtime/rt.jar.sun.awt.js","/lt/runtime/rt.jar.sun.js","/lt/runtime/rt.jar.java.util.function.js","/lt/runtime/rt.jar.jdk.internal.org.js","/lt/runtime/rt.jar.jdk.js","/lt/runtime/rt.jar.java.security.js","/lt/runtime/rt.jar.com.js","/lt/runtime/rt.jar.java.util.concurrent.locks.js","/lt/runtime/rt.jar.java.beans.js","/lt/cheerpj/lib/content-types.properties","/lt/runtime/rt.jar.sun.awt.datatransfer.js","/lt/runtime/rt.jar.sun.java2d.js","/lt/runtime/rt.jar.sun.font.js","/lt/runtime/rt.jar.com.sun.beans.js","/lt/runtime/rt.jar.java.awt.datatransfer.js","/lt/runtime/rt.jar.java.util.logging.js","/lt/runtime/rt.jar.java.awt.geom.js","/lt/cheerpj/lib/security/java.policy","/lt/runtime/rt.jar.java.awt.event.js","/lt/runtime/rt.jar.sun.java2d.pipe.js","/lt/runtime/rt.jar.sun.awt.dnd.js","/lt/runtime/rt.jar.javax.swing.event.js","/lt/runtime/rt.jar.sun.swing.js","/lt/cheerpj/lib/swing.properties","/lt/runtime/rt.jar.javax.swing.plaf.metal.js","/lt/runtime/rt.jar.javax.swing.plaf.basic.js","/lt/runtime/rt.jar.javax.swing.plaf.js","/lt/runtime/rt.jar.javax.swing.border.js","/lt/runtime/rt.jar.com.sun.swing.js","/lt/runtime/rt.jar.com.sun.java.js","/lt/runtime/rt.jar.java.util.stream.js","/lt/runtime/rt.jar.sun.nio.ch.js","/lt/runtime/rt.jar.sun.java2d.loops.js","/lt/runtime/rt.jar.java.awt.color.js","/lts/rt.jar.c12.txt","/lt/cheerpj/lib/fonts/LucidaSansRegular.ttf","/lts/rt.jar.c7.txt","/lts/rt.jar.c8.txt","/lts/rt.jar.c6.txt","/lt/cheerpj/lib/fonts/badfonts.txt","/lt/cheerpj/lib/fonts/index.list","/lt/cheerpj/lib/fonts/fallback","/lt/cheerpj/fontconfig.properties","/lt/runtime/rt.jar.sun.awt.event.js","/lts/rt.jar.c14.txt","/lts/rt.jar.c13.txt","/lt/runtime/rt.jar.sun.awt.im.js"];
+                cheerpjInit({preloadResources:preloadResources}).then(cheerpjReady);
+                //cheerpjCreateDisplay(640,480,document.getElementById("display"));
+            });
+            
+            function cheerpjReady() {
+                var textConsole = document.getElementById("console");
+                    
+                if (window.compileData) {
+                    textConsole.textContent = "> Compiling...\r\n\r\n";
+		
+                    //var packageName = "javafiddle" + (currentId++).toString();
+                    //newCode = "package " + packageName + ";\n" + newCode;
+                    //cheerpjAddStringFile("/str/JavaFiddle.java", newCode);
+                    
+                    let mainClass = window.compileData.compile.mainClass;
+                    let mainFile = mainClass + ".java";
+                    console.log("mainClass", mainClass);
+                    
+                    for (file of window.compileData.compile.sourceFiles) {
+                        let name = file.name;
+                        let content = "";
+                        
+                        for (line of file.contents) {
+                            content += line + "\n";
+                        }
+                        
+                        cheerpjAddStringFile("/str/" + name, content);
+                    }
+                    
+                    for (file of window.compileData.data.dataFiles) {
+                        let name = file.name;
+                        let content = "";
+                        
+                        for (line of file.contents) {
+                            content += line + "\n";
+                        }
+                        
+                        cheerpjAddStringFile("/str/" + name, content);
+                    }
+                    
+                    cheerpjRunMain("com.sun.tools.javac.Main", "/app/tools.jar", "/str/" + mainFile ,"-d", "/str/").then(
+                        function(r)
+                        {
+                            var cb = document.getElementById("compileButton");
+                            cb.disabled = false;
+                            // Non-zero exit code means that an error has happened
+                            if(!r) {
+                                cheerpjRunMain(mainFile, "/app/tools.jar");
+                            }
+                            else {
+                                console.log(r);
+                            }
+                        }
+                    );
+                }
+                else {
+                    textConsole.textContent = "Nothing to do...";
+                }
+            }
+        
+        </script>
+    </body>
+</html>

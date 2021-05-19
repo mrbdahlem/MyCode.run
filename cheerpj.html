@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>run.MyCode</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <!-- favicons -->
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+        <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+        <link rel="manifest" href="/manifest.json">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+        <meta name="theme-color" content="#ffffff">
+
+        <!-- Polyfill... make browsers understand the same Javascript -->
+        <script type="text/javascript" src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+        
+        <!-- AWS Lambda API for HelloFunction runner -->
+        <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+        <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+        <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+        <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+        <script type="text/javascript" src="apigClient.js"></script>
+        
+        <!-- Source File management -->
+        <script type="text/javascript" src="filemanager.js"></script>
+                
+        <!-- Hello.js OAUTH library (no relation to HelloAPI) -->
+        <script src="lib/hello.all.min.js"></script>
+        
+        <!-- GitHub rest API -->
+        <script src="github.js"></script>
+        
+        <!-- Logo font -->
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Inconsolata" />
+        
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Bootstrap theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="base.css">
+    </head>
+    <body>
+        <!-- The main navigation bar/header -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                    
+                <div class="navbar-header">
+                    <!-- winking monkey logo and brand -->
+                    <div class="navbar-brand" style="padding-top: 10px"><span><img src="winkingmonkey.svg" height="32" style="display: inline-block;" alt="myCode.run();"><span class="appname">&nbsp;myCode.run();</span></span></div>
+                    <!-- the hamburger expand/collapse button for small screens -->
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    
+                </div>
+            
+                <!-- nav menu -->
+                <div id="navbar" class="collapse navbar-collapse">                    
+                    <ul class="nav navbar-nav navbar-left">
+                        <!-- Main file menu -->
+                        <li class="dropdown projectmenu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Project<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a onclick="newFile();">New File...</a></li>
+                                <li><a onclick="renameFile();">Rename this file...</a></li>
+                                <li><a onclick="FileManager.setMainFile();">Make this the Main file</a></li>
+                                <li><a onclick="FileManager.removeFile();">Remove this file</a></li>
+                                <li class="divider"></li>
+                                <li><a onclick="newFolder();">New Folder...</a></li>
+                                <li><a onclick="renameFolder();">Rename the current folder...</a></li>
+                                <li><a onclick="removeFolder();">Remove the current folder...</a></li>
+                                <li class="divider"></li>
+                                <li><a onclick="loadGist();">Load GitHub Gist...</a></li>
+                                <li><a onclick="loadRepo();">Load GitHub Repository...</a></li>
+                            </ul>
+                        <!-- File Menu... gets populated by FileManager and only shown on small screens-->
+                        <li class="dropdown filemenulist">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded=false">Files<span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <ul id="filemenuList"></ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><p class="navbar-btn"><a class="btn btn-primary btn-block saveButton" role="button" onclick="save();">Save</a></p></li>
+                        
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <!-- Run the program! -->
+                        <li><p class="navbar-btn"><a class="btn btn-success btn-block runButton" role="button" onclick="runCodeCheerp();">Run</a></p></li>
+                        <li><p class="navbar-btn"><a class="btn btn-info btn-block testButton" role="button" onclick="testCode();">Test</a></p></li>
+                        
+                    </ul>
+                    
+                </div><!--/.nav-collapse -->
+                
+        </nav>
+
+        <!-- The main display -->
+        <div class="container-fluid fillit belowheader abovebottom noscroll">
+           <div class="row no-pad fillit">
+               <!-- a list to select files to display -->
+               <div class="body-filelist">
+                <div id="filesList" class="file-List scrollable">
+                </div>
+               </div>
+                <!-- the main file editor -->
+                <div class="col-md-auto fillit">
+                    <pre id="editor" class="fillit"></pre>
+                </div>
+            </div> <!-- editor row -->
+        </div><!-- /.container -->
+
+
+        <!-- Hidden modal to display output from program execution -->
+        <div class="modal fade" id="outputModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog  modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="outputModalTitle">Modal title</h4>
+                    </div>
+                    <div class="modal-body" id="outputModalBody">
+                        <!-- Dropdown to select test-case output when code is "tested" -->
+                        <div id="testOutputSelector" class="dropdown">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Test Output<span class="caret"></span>
+                            </button>
+                            <div id="testCaseList" class="dropdown-menu">
+                            </div>
+                        </div>
+                        <div id="outputContainer">
+                            <pre id="output">Please wait...</pre>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <span id="exTime"></span>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <!-- Hidden modal to display a list of repos -->
+        <div class="modal fade" id="listModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog  modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="listModalTitle">Modal title</h4>
+                    </div>
+                    <div class="modal-body" id="listModalBody">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
+        <!-- Hidden modal to control code URL generation -->
+        <div class="modal fade" id="saveModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog  modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="saveModalTitle">Save</h4>
+                    </div>
+                    <div class="modal-body" id="saveModalBody">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveShowProject">
+                                Show Project Menu
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveShowFiles">
+                                Show Files List
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveShowRun">
+                                Show Run Button
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label for="saveShowTest">
+                                <input type="checkbox" id="saveShowTest">
+                                Show Test Button
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveModalSaveBtn" onclick="saveUrl()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        
+        <!-- jquery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Bootstrap compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!-- ace editor -->
+        <script src="ace-min/ace.js" type="text/javascript" charset="utf-8"></script>
+        <!-- Browser History management -->
+        <script src="lib/jquery.history.js"></script>
+        <!-- code compression/decompression -->
+        <script src="lib/lzma/lzma_worker-min.js"></script>
+
+        <script>     
+            /*
+             * Initialize the program editor and files
+             */
+            
+            // Setup ace text editor
+            var dom = require("ace/lib/dom");
+            
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/twilight");
+            editor.session.setMode("ace/mode/java");
+            editor.$blockScrolling = Infinity;
+            editor.setOptions({
+                //maxLines: 30,
+                //minLines: 10,
+                fontFamily: "Inconsolata",
+                fontSize: "12pt"
+            });
+            
+            //add command to all new editor instaces
+            require("ace/commands/default_commands").commands.push({
+                name: "Toggle Fullscreen",
+                bindKey: "F11",
+                exec: function (editor) {
+                    var fullScreen = dom.toggleCssClass(document.body, "fullScreen");
+                    dom.setCssClass(editor.container, "fullScreen", fullScreen);
+                    editor.setAutoScrollEditorIntoView(!fullScreen);
+                    editor.resize();
+                }
+            });
+
+            // Connect changes in editor to whatever file is being edited
+            editor.on('change', function() { FileManager.updateFile(editor.getValue()); });
+            FileManager.setEditor(editor);
+            FileManager.addFileDisplay("#filesList");
+            FileManager.addFileDisplay("#filemenuList");
+            
+            // Detect if this page is embedded in another, add css if so
+            $(function() {
+                if (window.self != window.top) {
+                    $(document.body).addClass("in-iframe");
+                }
+            });
+            
+            // Prepare code compression/decompression
+            //var lzma = new LZMA("lib/lzma/lzma_worker-min.js");
+            
+            // Check/get url parameters
+            var params = new URLSearchParams(window.location.search);
+            
+            if (params.has('norun')) {
+                $('.runButton').hide();
+            }
+            
+            if (!params.has('test')) {
+                $('.testButton').hide();
+            }
+            
+            if (params.has('noproject')) {
+                $('.projectmenu').hide();
+                $('.saveButton').hide();
+            }
+            
+            if (params.has('nofiles')) {
+                $('.body-filelist').hide();
+                $('.filemenulist').hide();
+                $('.saveButton').hide();
+            }
+            
+            if (params.has('gist')) {
+                $('.saveButton').hide();
+            }
+            
+            // If the url contains a GIST id
+            if (params.has('gist')) {
+                var main = null;
+                
+                if (params.has('main')) {
+                    main = decodeURI(params.get('main'));
+                    console.log('Main class: ' + main);
+                }
+                
+                // Download files from gist.github
+                FileManager.loadFromGist(decodeURI(params.get('gist')), main, function(x, txtStatus, error) {
+                            alert(txtStatus + " error retrieving gist " + error);
+                        });
+            }
+            // or if the url contains a GitHub repo
+            else if (params.has('repo')) {
+                var main = null;
+                
+                if (params.has('main')) {
+                    main = decodeURI(params.get('main'));
+                    console.log('Main class: ' + main);
+                }
+                
+                var repoName = decodeURI(params.get('repo'));
+                // Download files from github repo
+                gitHub.getRepo(repoName, FileManager, main);
+            }
+            else if (params.has('code')) {
+                var main = null;
+                
+                if (params.has('main')) {
+                    main = decodeURI(params.get('main'));
+                    console.log('Main class: ' + main);
+                }
+                
+                let base64 = params.get('code');
+                
+                fetch("data:application/octet-stream;base64,"+base64).then(r => r.blob()).then(function(blob){
+                var reader = new FileReader();
+                reader.onload = function(){
+                    let compressed_data = Array.from(new Uint8Array(reader.result));
+                    LZMA.decompress(compressed_data, function(json, error){
+                        if (error) {
+                            alert("Could not decompress code. "+error);
+                            return;
+                        }
+
+                        FileManager.loadFromJson(json);
+                        FileManager.setCurrentFile(FileManager.getMainFile());
+                        FileManager.setCurrentFolder(FileManager.getMainFile().parent);
+                        FileManager.updateDisplay();
+                    });
+                  };
+                reader.readAsArrayBuffer(blob);              
+                });
+            }
+            // otherwise, create a sample project
+            else {
+                var mainFile = new SourceFile();
+                mainFile.name = "Main.java";
+                mainFile.contents = 
+"public class Main {\n\
+    public static void main(String[] args) {\n\
+        System.out.println(\"Hello World\");\n\
+    }\n\
+}";
+                // If the test option was specified
+                if (params.has('test')) {
+                    // Add a JUnit test file
+                    var testFile = new SourceFile();
+                    testFile.name = "TestMain.java";
+                    testFile.contents = 
+"import java.io.ByteArrayOutputStream;\n\
+import java.io.PrintStream;\n\
+import static org.junit.Assert.*;\n\
+import org.junit.Test;\n\
+\n\
+public class TestMain {\n\
+    @Test\n\
+    public void testMain() {\n\
+        // Redirect Standard output\n\
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n\
+        PrintStream ps = new PrintStream(baos);\n\
+        PrintStream old = System.out;\n\
+        System.setOut(ps);\n\
+        \n\
+        Main.main(new String[0]);\n\
+        \n\
+        // Clear the output and restore the original\n\
+        System.out.flush();\n\
+        \n\
+        System.setOut(old);\n\
+        String output = baos.toString();\n\
+        System.out.print(output);\n\
+        assertEquals(\"\\\"Hello World\\\" should be \\\"Hello World\\\\n\\\"\\n\", \"Hello World\\n\", output);\n\
+    }\n\
+}";
+                    // and place it in a "Test" folder
+                    var testFolder = new Folder("Test");
+                    testFolder.addFile(testFile);
+                    FileManager.addFolder(testFolder);
+                    FileManager.setCurrentFolder(FileManager.getRootFolder());
+                }
+                
+                // Add the sample file(s) to the filemanager
+                FileManager.setCurrentFile(mainFile);
+                FileManager.addFile(mainFile);
+                FileManager.setMainFile(mainFile);
+    }
+            
+            /*
+             * Create a new source file, prompting the user for its name.  Then
+             * add the new file to the file manager.
+             */
+            function newFile() {
+                var filename = getUserInput("New file name:\n(note: only files ending in .java are compiled)");
+                
+                if (filename !== null) {
+                    var file = new SourceFile(filename);
+                    FileManager.addFile(file);
+                }
+            }
+            
+            /*
+             * Rename the current file, prompting the user for the new name
+             */
+            function renameFile() {
+                var filename = getUserInput("New file name:\n(note: only files ending in .java are compiled)", FileManager.getFile().name);
+                
+                if (filename !== null) {
+                    FileManager.renameFile(filename);
+                }
+            }
+            
+            /*
+             * Create a new source file, prompting the user for its name.  Then
+             * add the new file to the file manager.
+             */
+            function newFolder() {
+                var foldername = getUserInput("New folder name:");
+                
+                if (foldername !== null) {
+                    var folder = new Folder(foldername);
+                    FileManager.addFolder(folder);
+                }
+            }
+            
+            
+            /*
+             * Prompt the user to delete the current folder and its contents
+             */
+            function removeFolder() {
+                var doit = confirm("Really delete " + FileManager.getCurrentFolder().name + " and its contents?");
+                
+                if (doit) {
+                    FileManager.removeFolder();
+                }
+            }
+            
+            /*
+             * Rename the current file, prompting the user for the new name
+             */
+            function renameFolder() {
+                var foldername = getUserInput("New folder name:", FileManager.getCurrentFolder().name);
+                
+                if (foldername !== null) {
+                    FileManager.renameFolder(foldername);
+                }
+            }
+            
+            /*
+             * Prompt the user for a string, looping until something is
+             * entered or cancel is pressed
+             */
+            function getUserInput(promptText, defaultval) {
+                var value = "";
+                
+                while (value === "") {
+                    value = prompt(promptText, defaultval);
+                }
+                
+                return value;
+            }
+            
+            /*
+             * Prompt the user for a GIST id and load the files from that gist
+             */
+            function loadGist() {
+                var gist = getUserInput("Enter the GIST id:\n(Downloaded files will replace all files in this code run)",
+                                        "c0cbb1368faf9ea114f5abe48a601ecd");
+                
+                if (gist !== null) {
+                    FileManager.empty();
+                    FileManager.loadFromGist(gist, null, function(x, txtStatus, error) {
+                            alert(txtStatus + " error retrieving gist " + error);
+                        });
+                    
+                    var params = new URLSearchParams(window.location.search);
+                    params.set('gist', gist);
+                    
+                    params.delete('repo');
+                    params.delete('code');
+                    
+                    History.pushState(null, document.title, `${location.pathname}?${params}`);
+                }   
+            }
+            
+            /*
+             * Prompt the user for a GithHub repo and load the files from that repo 
+             */
+            function loadRepo() {
+                gitHub.getRepos(function(repos){
+                    $('#listModalTitle').text("Select Repo");
+                    var list = document.createElement('ul');
+                    $('#listModalBody').empty();
+                        
+                    repos.forEach(function(repo) {
+                        var li = document.createElement('li');
+                        var a = document.createElement('a');
+                        $(list).append(li);
+                        $(li).append(a);
+                        $(a).text(repo.full_name);
+                        $(a).click(repo, selectRepo)
+                    });
+                    
+                    $('#listModalBody').append(list);
+                    $('#listModal').modal('show');
+                }, 
+                function(e) {
+                    alert('GitHub communication error: ' + e.error.message);
+                });             
+            }
+            
+            function selectRepo(event) {
+                $('#listModal').modal('hide');
+                
+                var repo = event.data;
+                FileManager.empty();
+                gitHub.loadRepo(FileManager, repo, null);
+                
+                var params = new URLSearchParams(window.location.search);
+                params.set('repo', repo.full_name);
+
+                params.delete('gist');
+                params.delete('code');
+                
+                History.pushState(null, document.title, `${location.pathname}?${params}`);
+                $('.saveButton').show();
+            }
+            
+            function save() {
+                if (gitHub.openRepo) {
+                    gitHub.saveRepo(FileManager);
+                }
+                else {
+                    let saveModal = $('#saveModal');
+                    
+                    saveModal.find('#saveShowRun').prop('checked', !params.has('norun'));
+                    saveModal.find('#saveShowTest').prop('checked', params.has('test'));
+                    saveModal.find('#saveShowProject').prop('checked', !params.has('noproject'));
+                    saveModal.find('#saveShowFiles').prop('checked', !params.has('nofiles'));                   
+                    
+                    saveModal.modal('show');
+                }
+            }
+            
+            function saveUrl() {
+                let saveModal = $('#saveModal');
+                
+                var params = new URLSearchParams(window.location.search);
+                
+                if (!saveModal.find('#saveShowRun').prop('checked')) {
+                    params.set('norun', true);
+                }
+                else {
+                    params.delete('norun');
+                }
+                
+                if (saveModal.find('#saveShowTest').prop('checked')) {
+                    params.set('test', true);
+                }
+                else {
+                    params.delete('test');
+                }
+                
+                if (!saveModal.find('#saveShowProject').prop('checked')) {
+                    params.set('noproject', true);
+                }
+                else {
+                    params.delete('noproject');
+                }
+                
+                if (!saveModal.find('#saveShowFiles').prop('checked')) {
+                    params.set('nofiles', true);
+                }
+                else {
+                    params.delete('nofiles');
+                }
+                
+                params.delete('repo');
+                params.delete('gist');
+                
+                let json = FileManager.saveToJson();
+                
+                LZMA.compress(json, 1, function(compressed, error){
+                    saveModal.modal('hide');
+                    if (error) {
+                        window.alert('Could not compress code!' + error);
+                        console.log(error);
+                        return;
+                    }
+                    
+                    let reader = new FileReader();
+                    reader.onload = function(){
+                        let base64 = reader.result.substr(reader.result.indexOf(",")+1);
+                        params.set('code', base64);
+                        History.pushState(null, document.title, `${location.pathname}?${params}`);
+                        
+                        let temp = $("<input>");
+                        $("body").append(temp);
+                        temp.val(location.href).select();
+                        document.execCommand("copy");
+                        temp.remove();
+                    };
+                    reader.readAsDataURL(new Blob([new Uint8Array(compressed)]));
+                });
+            }
+        </script>
+        
+        <script src="HelloAPIkey.js" type="text/javascript"></script>
+        
+        <!-- the program runner API -->
+        <script src="runcode.js" type="text/javascript"></script>    
+        <script src="runcheerp.js" type="text/javascript"></script>       
+    </body>
+</html>
