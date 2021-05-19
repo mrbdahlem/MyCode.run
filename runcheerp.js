@@ -7,7 +7,9 @@
 function runCodeCheerp() {
     // Get the main class's actual name..
     // drop the .java extension
-    var mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
+    var mainFile = FileManager.getMainFile().name;
+    var mainName = mainFile.replace(/\.[^/.]+$/, "");
+    
     // Get the file's package name
     var pkgReg = /package\s+([\w\.]+)\s*;/;
     var packageName = pkgReg.exec(FileManager.getMainFile().contents);
@@ -23,7 +25,7 @@ function runCodeCheerp() {
         compile: {
             version: 1,
             mainClass: packageName[1] + "." + mainName,
-            mainFile: mainName,
+            mainFile: mainFile,
             sourceFiles: []
         },
         data: {
