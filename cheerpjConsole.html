@@ -138,8 +138,6 @@
                     cheerpjRunMain("com.sun.tools.javac.Main", "/app/tools.jar", "/str/" + mainFile ,"-d", "/str/").then(
                         function(r)
                         {
-                            var cb = document.getElementById("compileButton");
-                            cb.disabled = false;
                             // Non-zero exit code means that an error has happened
                             if(!r) {
                                 cheerpjRunMain(mainFile, "/app/tools.jar");
