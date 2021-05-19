@@ -375,7 +375,7 @@ function addAllSourceFiles(folder, list, pkgRequired) {
             var sourceFile = {};
             sourceFile.name = path;
             
-            if (pkgRequired && file === FileManager.getMainFile()) {
+            if (pkgRequired) {
                 var pkgReg = /package\s+([\w\.]+)\s*;/;
                 var packageName = pkgReg.exec(sourceFile.contents);
                 if (packageName === null || packageName.length < 2) {

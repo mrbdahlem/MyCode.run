@@ -13,7 +13,7 @@ function runCodeCheerp() {
     var packageName = pkgReg.exec(FileManager.getMainFile().contents);
     // Add the package name to the class's name
     if (packageName === null || packageName.length < 2) {
-        packageName[1] = "default";
+        packageName = ["package", "default"];
     }
     
     mainName = packageName[1] + "." + mainName;   
