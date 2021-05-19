@@ -12,9 +12,11 @@ function runCodeCheerp() {
     var pkgReg = /package\s+([\w\.]+)\s*;/;
     var packageName = pkgReg.exec(FileManager.getMainFile().contents);
     // Add the package name to the class's name
-    if (packageName !== null && packageName.length >= 2) {
-        mainName = packageName[1] + "." + mainName;
+    if (packageName === null || packageName.length < 2) {
+        packageName[1] = "default";
     }
+    
+    mainName = packageName[1] + "." + mainName;   
     
     // Prepare the request to run the code
     // Set up the request body for a compile-run request
@@ -34,7 +36,7 @@ function runCodeCheerp() {
     
     var root = FileManager.getRootFolder();
     // Add the files in the global file manager to the request body.
-    addAllSourceFiles(root, body.compile.sourceFiles);
+    addAllSourceFiles(root, body.compile.sourceFiles, true);
     
     // Add data files to the request
     addAllDataFiles(root, body.data.dataFiles);
