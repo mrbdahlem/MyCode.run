@@ -148,7 +148,8 @@
                                 console.log(r);
                             }
                         }
-                    );
+                    )
+                    .catch(error=>console.log("Cheerpj error", error));
                 }
                 else {
                     textConsole.textContent = "Nothing to do...";
