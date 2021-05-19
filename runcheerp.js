@@ -16,15 +16,14 @@ function runCodeCheerp() {
         packageName = ["package", "default"];
     }
     
-    mainName = packageName[1] + "." + mainName;   
-    
     // Prepare the request to run the code
     // Set up the request body for a compile-run request
     var body = {
         version: 1,
         compile: {
             version: 1,
-            mainClass: mainName,
+            mainClass: packageName[1] + "." + mainName,
+            mainFile: mainName,
             sourceFiles: []
         },
         data: {

@@ -110,8 +110,9 @@
                     //cheerpjAddStringFile("/str/JavaFiddle.java", newCode);
                     
                     let mainClass = window.compileData.compile.mainClass;
-                    let mainFile = mainClass + ".java";
+                    let mainFile = window.compileData.compile.mainFile;
                     console.log("mainClass", mainClass);
+                    console.log("mainFile", mainFile);
                     console.log(window.compileData);
                     
                     for (file of window.compileData.compile.sourceFiles) {
