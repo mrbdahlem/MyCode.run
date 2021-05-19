@@ -349,7 +349,7 @@ function showFailed(result, display, timer, start) {
 }
 
 // Add all source files to the request file list
-function addAllSourceFiles(folder, list, pkgRequired) {
+function addAllSourceFiles(folder, list) {
     // Add all of the files from the this folder's subfolders to the request
     folder.folders.forEach(function(subfolder) {
        addAllSourceFiles(subfolder, list); 
@@ -374,17 +374,8 @@ function addAllSourceFiles(folder, list, pkgRequired) {
             // separated into individual lines
             var sourceFile = {};
             sourceFile.name = path;
+            sourceFile.contents = file.contents.split(/\r?\n/);
             
-            if (pkgRequired) {
-                var pkgReg = /package\s+([\w\.]+)\s*;/;
-                var packageName = pkgReg.exec(sourceFile.contents);
-                if (packageName === null || packageName.length < 2) {
-                    sourceFile.contents = ("package default;\n" + file.contents).split(/\r?\n/);                    
-                }
-            }
-            else {
-                sourceFile.contents = file.contents.split(/\r?\n/);
-            }
             list.push(sourceFile);
         }
     });
