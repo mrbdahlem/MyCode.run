@@ -106,7 +106,7 @@
                 </div><!--/.nav-collapse -->
                 
         </nav>
-
+        
         <!-- The main display -->
         <div class="container-fluid fillit belowheader abovebottom noscroll">
            <div class="row no-pad fillit">
@@ -151,6 +151,22 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+        
+        // Hidden modal to display error connecting to local runner
+        <div class="modal fade" id="cantrunalert" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="outputModalTitle">Run Failed</h4>
+                    </div>
+                    <div class="modal-body" id="outputModalBody">
+                        <p>Connecting with the local Java runner failed. Do you have it running?</p>
+                        <p><a href="https://run.mycode.run/localrunner/runner.jar" class="alert-link">Download</a> the local runner, start it, and try again.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Hidden modal to display a list of repos -->
         <div class="modal fade" id="listModal" tabindex="-1" role="dialog">
@@ -201,6 +217,13 @@
                             <label for="saveShowTest">
                                 <input type="checkbox" id="saveShowTest">
                                 Show Test Button
+                            </label>
+                        </div>
+                        
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveRunLocal">
+                                Run using local runner
                             </label>
                         </div>
                     </div>
@@ -275,6 +298,11 @@
             
             if (params.has('norun')) {
                 $('.runButton').hide();
+            }
+            else if (params.has('runlocal')) {
+                $('.runButton').prop("onclick", null)
+                        .off("click")
+                        .on('click', ()=>{runCodeLocal();});
             }
             
             if (!params.has('test')) {
@@ -556,7 +584,8 @@ public class TestMain {\n\
                     saveModal.find('#saveShowRun').prop('checked', !params.has('norun'));
                     saveModal.find('#saveShowTest').prop('checked', params.has('test'));
                     saveModal.find('#saveShowProject').prop('checked', !params.has('noproject'));
-                    saveModal.find('#saveShowFiles').prop('checked', !params.has('nofiles'));                   
+                    saveModal.find('#saveShowFiles').prop('checked', !params.has('nofiles'));  
+                    saveModal.find('#saveRunLocal').prop('checked', params.has('runlocal'));                   
                     
                     saveModal.modal('show');
                 }
@@ -569,9 +598,16 @@ public class TestMain {\n\
                 
                 if (!saveModal.find('#saveShowRun').prop('checked')) {
                     params.set('norun', true);
+                    params.delete('runlocal');
                 }
                 else {
                     params.delete('norun');
+                    if (saveModal.find('#saveRunLocal').prop('checked')) {
+                        params.set('runlocal', true);
+                    }
+                    else {
+                        params.delete('runlocal');
+                    }
                 }
                 
                 if (saveModal.find('#saveShowTest').prop('checked')) {
