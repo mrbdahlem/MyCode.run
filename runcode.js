@@ -91,6 +91,77 @@ function runCode() {
 }
 
 /*
+ * Run the code contained in the file manager, by compiling everything and
+ * executing the main class, then display the result.
+ */
+function runCodeLocal(url) {
+    url = url || "http://127.0.0.1:8123/run";
+    console.log ("local url", url);
+    
+    if (display)
+        display.destroy();
+    display = null;
+    
+    // Get the main class's actual name..
+    // drop the .java extension
+    var mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
+    // Get the file's package name
+    var pkgReg = /package\s+([\w\.]+)\s*;/;
+    var packageName = pkgReg.exec(FileManager.getMainFile().contents);
+    // Add the package name to the class's name
+    if (packageName !== null && packageName.length >= 2) {
+        mainName = packageName[1] + "." + mainName;
+    }
+        
+    // Prepare the request to run the code
+    // Set up the request body for a compile-run request
+    var body = {
+        version: 1,
+        compile: {
+            version: 1,
+            mainClass: mainName,
+            sourceFiles: []
+        },
+        data: {
+            version: 1,
+            dataFiles: []
+        },
+        "test-type": "run"
+    };
+    
+    var root = FileManager.getRootFolder();
+    // Add the files in the global file manager to the request body.
+    addAllSourceFiles(root, body.compile.sourceFiles);
+    
+    // Add data files to the request
+    addAllDataFiles(root, body.data.dataFiles);
+    
+    // Add parameters for the request
+    var params = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+    };
+    
+    var additionalParams = {};
+    
+    // Make the compile-run request
+    // Build a POST request to submit the code for testing
+    // Build a POST request to submit the code for testing
+    $.post({
+        url: url,
+        data: JSON.stringify(body), // Include the source code as JSON encoded data
+        contentType: 'application/JSON',
+        success: function (data, status) {
+
+        },
+        error: function (xhr, status, error) {
+            $('#cantrunalert').modal('show');
+        },
+        dataType: "text"
+    });
+}
+
+/*
  * Test the code contained in the file manager, by compiling everything and
  * executing the test cases in the classes in the "Test" folder, then display
  * the results.
