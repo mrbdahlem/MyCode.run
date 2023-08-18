@@ -97,11 +97,11 @@ function runCode() {
 function runCodeLocal(url) {
     url = url || "http://127.0.0.1:8123/run";
     console.log ("local url", url);
-    
+
     if (display)
         display.destroy();
     display = null;
-    
+
     // Get the main class's actual name..
     // drop the .java extension
     var mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
@@ -112,7 +112,7 @@ function runCodeLocal(url) {
     if (packageName !== null && packageName.length >= 2) {
         mainName = packageName[1] + "." + mainName;
     }
-        
+
     // Prepare the request to run the code
     // Set up the request body for a compile-run request
     var body = {
@@ -128,22 +128,22 @@ function runCodeLocal(url) {
         },
         "test-type": "run"
     };
-    
+
     var root = FileManager.getRootFolder();
     // Add the files in the global file manager to the request body.
     addAllSourceFiles(root, body.compile.sourceFiles);
-    
+
     // Add data files to the request
     addAllDataFiles(root, body.data.dataFiles);
-    
+
     // Add parameters for the request
     var params = {
         "Content-Type": "application/json",
         "Accept": "application/json"
     };
-    
+
     var additionalParams = {};
-    
+
     // Make the compile-run request
     // Build a POST request to submit the code for testing
     // Build a POST request to submit the code for testing
@@ -159,6 +159,54 @@ function runCodeLocal(url) {
         },
         dataType: "text"
     });
+}
+
+
+/**
+ * Run java code using the CheerpJ engine
+ */
+function runCodeCheerpJ() {
+    // Get the main class's actual name..
+    // drop the .java extension
+    let mainName = FileManager.getMainFile().name.replace(/\.[^/.]+$/, "");
+    // Get the file's package name
+    const pkgReg = /package\s+([\w\.]+)\s*;/;
+    const packageName = pkgReg.exec(FileManager.getMainFile().contents);
+    // Add the package name to the class's name
+    if (packageName !== null && packageName.length >= 2) {
+        mainName = packageName[1] + "." + mainName;
+    }
+
+    // Prepare the request to run the code
+    // Set up the request body for a compile-run request
+    const sub = {
+        version: 1,
+        compile: {
+            version: 1,
+            mainClass: mainName,
+            sourceFiles: []
+        },
+        data: {
+            version: 1,
+            dataFiles: []
+        },
+        "test-type": "run"
+    };
+
+    const root = FileManager.getRootFolder();
+    // Add the files in the global file manager to the request body.
+    addAllSourceFiles(root, sub.compile.sourceFiles);
+
+    // Add data files to the request
+    addAllDataFiles(root, sub.data.dataFiles);
+
+    const url = "javaConsole.html";
+
+    const child = window.open(url, "_blank", "popup=true, innerwidth=802, innerheight=642");
+    child.addEventListener('load', ()=>{
+        if ((child !== null) && (child.closed === false))
+            child.compileJava(sub);
+    }, true);
 }
 
 /*

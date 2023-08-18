@@ -1,0 +1,58 @@
+/* override browser default */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* use viewport-relative units to cover page fully */
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+#tabMenu {
+    position: absolute;
+    top: 0px;
+}
+
+#displayTabs {
+    background-color: #000;
+    position: absolute;
+    top: 40px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+}
+
+#term,
+#terminal {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#hider {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#graphics {
+    
+}
+
+#graphicsDisplay {
+    min-width: 800px;
+    min-height: 600px;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
