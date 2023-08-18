@@ -93,7 +93,7 @@ function compileJava(compileUnit) {
         compileUnit.sourceDir = "/str/";
         compileUnit.filename = compileUnit.sourceDir + "compile.unit";
         
-        // Save the compile unit to a file so it can be accessed by the compiler
+        // Save the compile unit to a file so that it can be accessed by the compiler
         cheerpjAddStringFile(compileUnit.filename, JSON.stringify(compileUnit));
         
         compileUnit.classpath = 

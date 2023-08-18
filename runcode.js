@@ -493,8 +493,9 @@ function addAllSourceFiles(folder, list) {
             // separated into individual lines
             var sourceFile = {};
             sourceFile.name = path;
-            sourceFile.contents = file.contents.split(/\r?\n/);
-            
+            //sourceFile.contents = file.contents.split(/\r?\n/);
+            sourceFile.contents = [file.contents];
+
             list.push(sourceFile);
         }
     });
