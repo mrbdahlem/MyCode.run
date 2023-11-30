@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>run.MyCode</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <!-- favicons -->
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+        <!-- <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
         <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
         <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
         <link rel="manifest" href="/manifest.json">
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"> -->
         <meta name="theme-color" content="#ffffff">
 
         <!-- Polyfill... make browsers understand the same Javascript -->
@@ -86,7 +86,7 @@
                             </ul>
                         <!-- File Menu... gets populated by FileManager and only shown on small screens-->
                         <li class="dropdown filemenulist">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded=false">Files<span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Files<span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li>
                                     <ul id="filemenuList"></ul>
@@ -285,7 +285,7 @@
             
             // Detect if this page is embedded in another, add css if so
             $(function() {
-                if (window.self != window.top) {
+                if (window.self !== window.top) {
                     $(document.body).addClass("in-iframe");
                 }
             });
@@ -299,7 +299,7 @@
             if (params.has('norun')) {
                 $('.runButton').hide();
             }
-            else if (params.has('runlocal')) {
+            else if (params.has('runlocal') || true) { // TODO: Remove DEFAULT RUNLOCAL
                 $('.runButton').prop("onclick", null)
                         .off("click")
                         .on('click', ()=>{runCodeCheerpJ();});
@@ -326,7 +326,7 @@
             
             // If the url contains a GIST id
             if (params.has('gist')) {
-                var main = null;
+                let main = null;
                 
                 if (params.has('main')) {
                     main = decodeURI(params.get('main'));
@@ -340,7 +340,7 @@
             }
             // or if the url contains a GitHub repo
             else if (params.has('repo')) {
-                var main = null;
+                let main = null;
                 
                 if (params.has('main')) {
                     main = decodeURI(params.get('main'));
@@ -352,7 +352,7 @@
                 gitHub.getRepo(repoName, FileManager, main);
             }
             else if (params.has('code')) {
-                var main = null;
+                let main = null;
                 
                 if (params.has('main')) {
                     main = decodeURI(params.get('main'));
@@ -362,7 +362,7 @@
                 let base64 = params.get('code');
                 
                 fetch("data:application/octet-stream;base64,"+base64).then(r => r.blob()).then(function(blob){
-                var reader = new FileReader();
+                const reader = new FileReader();
                 reader.onload = function(){
                     let compressed_data = Array.from(new Uint8Array(reader.result));
                     LZMA.decompress(compressed_data, function(json, error){
@@ -382,7 +382,7 @@
             }
             // otherwise, create a sample project
             else {
-                var mainFile = new SourceFile();
+                let mainFile = new SourceFile();
                 mainFile.name = "Main.java";
                 mainFile.contents = 
 "public class Main {\n\
@@ -393,7 +393,7 @@
                 // If the test option was specified
                 if (params.has('test')) {
                     // Add a JUnit test file
-                    var testFile = new SourceFile();
+                    let testFile = new SourceFile();
                     testFile.name = "TestMain.java";
                     testFile.contents = 
 "import java.io.ByteArrayOutputStream;\n\
@@ -422,7 +422,7 @@ public class TestMain {\n\
     }\n\
 }";
                     // and place it in a "Test" folder
-                    var testFolder = new Folder("Test");
+                    let testFolder = new Folder("Test");
                     testFolder.addFile(testFile);
                     FileManager.addFolder(testFolder);
                     FileManager.setCurrentFolder(FileManager.getRootFolder());
@@ -537,8 +537,10 @@ public class TestMain {\n\
             function loadRepo() {
                 gitHub.getRepos(function(repos){
                     $('#listModalTitle').text("Select Repo");
-                    var list = document.createElement('ul');
-                    $('#listModalBody').empty();
+                    let list = document.createElement('ul');
+                    let $listModalBody = $('#listModalBody');
+
+                    $listModalBody.empty();
                         
                     repos.forEach(function(repo) {
                         var li = document.createElement('li');
@@ -549,7 +551,7 @@ public class TestMain {\n\
                         $(a).click(repo, selectRepo)
                     });
                     
-                    $('#listModalBody').append(list);
+                    $listModalBody.append(list);
                     $('#listModal').modal('show');
                 }, 
                 function(e) {
