@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
         <title>Running Java...</title>
         <meta charset="UTF-8">
@@ -15,8 +15,9 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.19.0/css/xterm.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/xterm@4.19.0/lib/xterm.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.min.js"></script>
-        
-        <script src="https://cjrtnc.leaningtech.com/latest/loader.js"></script>
+
+        <script src="https://cjrtnc.leaningtech.com/3.0rc2/cj3loader.js"></script>
+        <!-- <script src="https://cjrtnc.leaningtech.com/latest/loader.js"></script> -->
     </head>
     <body>
         <ul class="nav nav-tabs" id="tabMenu">
@@ -35,10 +36,12 @@
         </div>
         <script>
 const urlParams = new URLSearchParams(window.location.search);
-useGraphics = urlParams.has('graphics');
+let useGraphics = urlParams.has('graphics');
+
+const $graphicsButton = $('#graphicsButton');
 
 if (!useGraphics) {
-    $('#graphicsButton').hide();
+    $graphicsButton.hide();
     $('#graphics').hide();
 }      
       
@@ -48,17 +51,17 @@ $('#terminalButton').click(()=>{
     $('#term').css('z-index', 10000);
     $('#hider').css('z-index', 9999);
 });
-$('#graphicsButton').click(()=>{
+$graphicsButton.click(()=>{
     $('.nav-tabs li').removeClass('active');
     $('#graphicsButton').parent().addClass('active');
     $('#term').css('z-index', 0);
     $('#hider').css('z-index', 99); 
 })
             
-let textPreloadFileList=["/lt/runtime/rt.jar.java.util.js","/lts/rt.jar.c75.txt","/lts/rt.jar.c77.txt","/lt/runtime/rt.jar.jdk.js","/lts/rt.jar","/lt/runtime/rt.jar.java.util.function.js","/lts/rt.jar.c76.txt","/lts/meta-index.c0.txt","/lts/meta-index","/lt/runtime/rt.jar.sun.nio.js","/lt/runtime/rt.jar.java.util.zip.js","/lt/runtime/rt.jar.sun.net.js","/lt/runtime/rt.jar.java.util.concurrent.js","/lt/runtime/rt.jar.java.nio.file.js","/lt/runtime/rt.jar.java.lang.js","/lt/runtime/rt.jar.sun.reflect.js","/lts/rt.jar.c83.txt","/lts/rt.jar.c98.txt","/lts/rt.jar.c97.txt","/lts/rt.jar.c96.txt","/lts/rt.jar.c95.txt","/lts/rt.jar.c94.txt","/lts/rt.jar.c93.txt","/lts/rt.jar.c92.txt","/lts/rt.jar.c91.txt","/lts/rt.jar.c90.txt","/lts/rt.jar.c89.txt","/lts/rt.jar.c88.txt","/lts/rt.jar.c87.txt","/lts/rt.jar.c86.txt","/lts/rt.jar.c85.txt","/lts/rt.jar.c84.txt","/lts/rt.jar.c99.txt","/lts/rt.jar.c100.txt","/lts/rt.jar.c1.txt","/lts/rt.jar.c0.txt","/lt/runtime/rt.jar.java.util.regex.js","/lt/runtime/rt.jar.java.js","/lt/runtime/rt.jar.java.lang.invoke.js","/lt/cheerpj/lib/accessibility.properties","/lt/runtime/rt.jar.sun.js","/lts/rt.jar.c2.txt","/lt/runtime/rt.jar.jdk.internal.org.js","/lt/runtime/rt.jar.java.io.js","/lt/runtime/rt.jar.sun.awt.resources.js","/lts/rt.jar.c27.txt","/lts/rt.jar.c28.txt","/lts/rt.jar.c26.txt","/lt/runtime/rt.jar.java.security.js","/lts/rt.jar.c25.txt","/lts/rt.jar.c24.txt","/lt/runtime/rt.jar.sun.nio.cs.js","/lt/runtime/rt.jar.com.sun.js","/lt/runtime/rt.jar.sun.security.js","/lt/runtime/rt.jar.javax.js","/lt/runtime/rt.jar.java.awt.im.js","/lt/runtime/rt.jar.java.util.spi.js","/lt/runtime/rt.jar.sun.misc.js","/lt/runtime/rt.jar.java.net.js","/lts/rt.jar.c22.txt","/lts/rt.jar.c23.txt","/lts/rt.jar.c21.txt","/lts/rt.jar.c73.txt","/lts/rt.jar.c74.txt","/lts/rt.jar.c72.txt","/lts/rt.jar.c29.txt","/lts/rt.jar.c30.txt","/lts/rt.jar.c65.txt","/lts/rt.jar.c66.txt","/lts/rt.jar.c64.txt","/lts/rt.jar.c19.txt","/lts/rt.jar.c20.txt","/lts/rt.jar.c18.txt","/lts/rt.jar.c71.txt","/lts/rt.jar.c70.txt","/lts/rt.jar.c69.txt","/lts/rt.jar.c68.txt","/lts/rt.jar.c17.txt","/lt/runtime/rt.jar.java.text.js","/lt/runtime/rt.jar.java.awt.font.js","/lt/runtime/rt.jar.sun.util.locale.js","/lt/runtime/rt.jar.sun.awt.geom.js","/lt/cheerpj/lib/ext/localedata.jar","/lt/runtime/rt.jar.sun.util.js","/lt/runtime/rt.jar.sun.text.js","/lt/runtime/rt.jar.java.util.concurrent.atomic.js","/lt/runtime/rt.jar.sun.awt.util.js","/lt/cheerpj/lib/currency.data","/lt/cheerpj/lib/currency.properties","/lts/rt.jar.c31.txt"];
-let graphicsPreloadFileList=["/lts/rt.jar.c31.txt","/lt/cheerpj/lib/currency.properties","/lt/cheerpj/lib/currency.data","/lt/runtime/rt.jar.jdk.js","/lts/rt.jar","/lt/runtime/rt.jar.java.util.function.js","/lt/runtime/rt.jar.sun.awt.util.js","/lt/runtime/rt.jar.java.util.concurrent.atomic.js","/lt/runtime/rt.jar.sun.text.js","/lt/runtime/rt.jar.sun.util.js","/lt/cheerpj/lib/ext/localedata.jar","/lt/runtime/rt.jar.sun.awt.geom.js","/lt/runtime/rt.jar.sun.util.locale.js","/lt/runtime/rt.jar.java.awt.font.js","/lt/runtime/rt.jar.java.text.js","/lts/rt.jar.c17.txt","/lts/rt.jar.c68.txt","/lts/rt.jar.c69.txt","/lts/rt.jar.c70.txt","/lts/rt.jar.c71.txt","/lts/rt.jar.c18.txt","/lts/rt.jar.c20.txt","/lts/rt.jar.c19.txt","/lts/rt.jar.c64.txt","/lts/rt.jar.c66.txt","/lts/rt.jar.c65.txt","/lts/rt.jar.c30.txt","/lts/rt.jar.c29.txt","/lts/rt.jar.c72.txt","/lts/rt.jar.c74.txt","/lts/rt.jar.c73.txt","/lts/rt.jar.c21.txt","/lts/rt.jar.c23.txt","/lts/rt.jar.c22.txt","/lt/runtime/rt.jar.java.net.js","/lt/runtime/rt.jar.sun.misc.js","/lt/runtime/rt.jar.java.util.spi.js","/lt/runtime/rt.jar.java.awt.im.js","/lt/runtime/rt.jar.javax.js","/lt/runtime/rt.jar.sun.security.js","/lt/runtime/rt.jar.com.sun.js","/lt/runtime/rt.jar.sun.nio.cs.js","/lts/rt.jar.c24.txt","/lts/rt.jar.c25.txt","/lts/rt.jar.c0.txt","/lts/rt.jar.c1.txt","/lt/runtime/rt.jar.java.security.js","/lts/rt.jar.c26.txt","/lts/rt.jar.c28.txt","/lts/rt.jar.c100.txt","/lts/rt.jar.c99.txt","/lts/rt.jar.c27.txt","/lt/runtime/rt.jar.sun.awt.resources.js","/lt/runtime/rt.jar.java.io.js","/lts/rt.jar.c84.txt","/lts/rt.jar.c85.txt","/lts/rt.jar.c86.txt","/lts/rt.jar.c87.txt","/lts/rt.jar.c88.txt","/lts/rt.jar.c89.txt","/lts/rt.jar.c90.txt","/lts/rt.jar.c91.txt","/lts/rt.jar.c92.txt","/lts/rt.jar.c93.txt","/lts/rt.jar.c94.txt","/lts/rt.jar.c95.txt","/lts/rt.jar.c96.txt","/lts/rt.jar.c97.txt","/lts/rt.jar.c98.txt","/lts/rt.jar.c83.txt","/lt/runtime/rt.jar.jdk.internal.org.js","/lts/rt.jar.c2.txt","/lt/runtime/rt.jar.sun.js","/lt/runtime/rt.jar.sun.reflect.js","/lt/cheerpj/lib/accessibility.properties","/lt/runtime/rt.jar.java.lang.invoke.js","/lt/runtime/rt.jar.java.js","/lt/runtime/rt.jar.java.util.regex.js","/lt/runtime/rt.jar.java.lang.js","/lt/runtime/rt.jar.java.nio.file.js","/lt/runtime/rt.jar.java.util.concurrent.js","/lt/runtime/rt.jar.sun.net.js","/lt/runtime/rt.jar.java.util.zip.js","/lt/runtime/rt.jar.sun.nio.js","/lts/meta-index","/lts/meta-index.c0.txt","/lts/rt.jar.c76.txt","/lts/rt.jar.c77.txt","/lts/rt.jar.c75.txt","/lt/runtime/rt.jar.java.util.js","/lt/runtime/rt.jar.sun.nio.ch.js","/lt/runtime/rt.jar.java.util.concurrent.locks.js","/lt/runtime/rt.jar.com.js","/lt/runtime/rt.jar.java.awt.js","/lt/runtime/rt.jar.java.awt.geom.js","/lt/runtime/rt.jar.sun.font.js","/lt/runtime/rt.jar.javax.imageio.js","/lt/runtime/rt.jar.com.sun.imageio.js","/lt/runtime/rt.jar.javax.swing.js","/lt/runtime/rt.jar.java.awt.image.js","/lt/runtime/rt.jar.sun.awt.image.js","/lt/runtime/rt.jar.javax.swing.filechooser.js","/lt/runtime/rt.jar.java.awt.event.js","/lt/cheerpj/lib/security/java.policy","/lt/runtime/rt.jar.javax.swing.border.js","/lt/runtime/rt.jar.javax.swing.plaf.js","/lt/runtime/rt.jar.javax.swing.text.js","/lt/runtime/rt.jar.sun.awt.js","/lt/runtime/rt.jar.java.util.logging.js","/lt/runtime/rt.jar.com.sun.imageio.plugins.jpeg.js","/lt/runtime/rt.jar.sun.nio.fs.js","/lt/runtime/rt.jar.sun.java2d.js","/lts/rt.jar.c50.txt","/lts/rt.jar.c51.txt","/lts/rt.jar.c49.txt","/lt/runtime/rt.jar.java.awt.color.js","/lt/runtime/rt.jar.sun.java2d.loops.js","/lt/runtime/rt.jar.java.beans.js","/lt/runtime/rt.jar.sun.awt.datatransfer.js","/lt/cheerpj/lib/content-types.properties","/lt/runtime/rt.jar.java.awt.datatransfer.js","/lt/runtime/rt.jar.com.sun.beans.js","/lt/runtime/rt.jar.javax.swing.event.js","/lt/runtime/rt.jar.sun.swing.js","/lt/cheerpj/lib/swing.properties","/lt/runtime/rt.jar.javax.swing.plaf.metal.js","/lt/runtime/rt.jar.javax.swing.plaf.basic.js","/lt/runtime/rt.jar.com.sun.swing.js","/lt/runtime/rt.jar.com.sun.java.js","/lt/runtime/rt.jar.sun.java2d.pipe.js","/lt/runtime/rt.jar.java.util.stream.js","/lt/runtime/rt.jar.java.awt.dnd.js","/lt/runtime/rt.jar.java.awt.peer.js","/lt/runtime/rt.jar.javax.swing.undo.js","/lt/cheerpj/lib/fonts/LucidaSansRegular.ttf","/lts/rt.jar.c8.txt","/lts/rt.jar.c9.txt","/lts/rt.jar.c7.txt","/lt/cheerpj/lib/fonts/badfonts.txt","/lt/cheerpj/lib/fonts/index.list","/lt/cheerpj/lib/fonts/fallback","/lt/cheerpj/fontconfig.properties","/lt/cheerpj/DejaVuSans.ttf","/lt/runtime/rt.jar.java.nio.js","/lt/runtime/rt.jar.sun.awt.dnd.js","/lt/runtime/rt.jar.sun.java2d.marlin.js","/lts/rt.jar.c14.txt","/lts/rt.jar.c15.txt","/lts/rt.jar.c13.txt","/lts/rt.jar.c12.txt","/lt/runtime/rt.jar.sun.awt.event.js","/lts/rt.jar.c16.txt","/lt/runtime/rt.jar.sun.awt.im.js"];
+let textPreloadFileList=[];
+let graphicsPreloadFileList=[];
 
-preloadFileList = useGraphics ? graphicsPreloadFileList : textPreloadFileList;
+let preloadFileList = useGraphics ? graphicsPreloadFileList : textPreloadFileList;
 
 const term = new Terminal();
 term.open(document.getElementById('terminal'));
@@ -74,7 +77,12 @@ fitAddon.fit();
 term.write("Initializing...\n");
 
 // Initialize cheerpj and preload resource files
-let preload = cheerpjInit({preloadResources:preloadFileList});
+// const preload = (async () => {
+//     await cheerpjInit();
+//     const lib = await cheerpjRunLibrary("/app/example.jar");
+//     // ...
+// )();
+const preload = cheerpjInit({preloadResources:preloadFileList});
 
 if (useGraphics) {
     cheerpjCreateDisplay(-1,-1, document.getElementById("graphicsDisplay"));
@@ -84,7 +92,7 @@ let compileData;
 let controller;
 let stdInPush;
 
-function compileJava(compileUnit) {
+async function compileJava(compileUnit) {
     compileData = compileUnit;
     
     preload.then(() => {
@@ -94,15 +102,18 @@ function compileJava(compileUnit) {
         compileUnit.filename = compileUnit.sourceDir + "compile.unit";
         
         // Save the compile unit to a file so that it can be accessed by the compiler
-        cheerpjAddStringFile(compileUnit.filename, JSON.stringify(compileUnit));
+        cheerpOSAddStringFile(compileUnit.filename, JSON.stringify(compileUnit));
         
-        compileUnit.classpath = 
-                "cheerpJ/CheerpJRunner.jar:"
-                        + "cheerpJ/tools.jar:"
+        // Need to do this with runlib?
+        compileUnit.classpath =
+                "/app/cheerpJ/CheerpJRunner.jar:"
+                        + "/app/cheerpJ/tools.jar:"
                         + compileUnit.tempDir;
         
         cheerpjRunMain("run.mycode.cheerpjrunner.Runner", compileUnit.classpath,
             compileUnit.filename);
+
+        console.log("here!");
     });
 }
 
